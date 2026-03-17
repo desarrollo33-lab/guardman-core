@@ -8,8 +8,8 @@ import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+import { collections } from './collections'
+import { users as Users } from './collections/System/Users'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -43,6 +43,19 @@ const cloudflare =
     ? await getCloudflareContextFromWrangler()
     : await getCloudflareContext({ async: true })
 
+// Inicializar servicios de IA si hay API keys configuradas
+// Nota: Los hooks usarán process.env directamente cuando se ejecuten
+const glmApiKey = process.env.GLM_API_KEY
+const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN
+
+if (glmApiKey) {
+  console.log('[Config] GLM API Key configurada')
+}
+
+if (telegramBotToken) {
+  console.log('[Config] Telegram Bot configurado')
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -50,7 +63,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections,
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

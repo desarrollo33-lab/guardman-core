@@ -69,6 +69,23 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    settings: Setting;
+    locations: Location;
+    neighborhoods: Neighborhood;
+    services: Service;
+    problems: Problem;
+    industries: Industry;
+    solutions: Solution;
+    personas: Persona;
+    leads: Lead;
+    'lead-duplicates': LeadDuplicate;
+    'scoring-rules': ScoringRule;
+    'seo-pages': SeoPage;
+    keywords: Keyword;
+    testimonials: Testimonial;
+    blog: Blog;
+    forms: Form;
+    'form-submissions': FormSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +95,23 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+    locations: LocationsSelect<false> | LocationsSelect<true>;
+    neighborhoods: NeighborhoodsSelect<false> | NeighborhoodsSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    problems: ProblemsSelect<false> | ProblemsSelect<true>;
+    industries: IndustriesSelect<false> | IndustriesSelect<true>;
+    solutions: SolutionsSelect<false> | SolutionsSelect<true>;
+    personas: PersonasSelect<false> | PersonasSelect<true>;
+    leads: LeadsSelect<false> | LeadsSelect<true>;
+    'lead-duplicates': LeadDuplicatesSelect<false> | LeadDuplicatesSelect<true>;
+    'scoring-rules': ScoringRulesSelect<false> | ScoringRulesSelect<true>;
+    'seo-pages': SeoPagesSelect<false> | SeoPagesSelect<true>;
+    keywords: KeywordsSelect<false> | KeywordsSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    blog: BlogSelect<false> | BlogSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -115,11 +149,49 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Usuarios del equipo Guardman
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  name: string;
+  role?: ('admin' | 'sales' | 'seo_manager' | 'support') | null;
+  avatar?: (number | null) | Media;
+  phone?: string | null;
+  isActive?: boolean | null;
+  telegram?: {
+    chatId?: string | null;
+    username?: string | null;
+    notificationsEnabled?: boolean | null;
+    notifyOnNewLead?: boolean | null;
+    notifyOnStatusChange?: boolean | null;
+  };
+  salesProfile?: {
+    preferredZones?:
+      | {
+          zone?: ('oriente' | 'nororiente' | 'norte' | 'poniente' | 'suroriente' | 'sur' | 'centro') | null;
+          id?: string | null;
+        }[]
+      | null;
+    specializations?:
+      | {
+          persona?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    workingHours?: {
+      start?: number | null;
+      end?: number | null;
+    };
+    maxPendingLeads?: number | null;
+  };
+  stats?: {
+    totalLeads?: number | null;
+    convertedLeads?: number | null;
+    conversionRate?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -145,7 +217,8 @@ export interface User {
  */
 export interface Media {
   id: number;
-  alt: string;
+  alt?: string | null;
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -155,6 +228,1062 @@ export interface Media {
   filesize?: number | null;
   width?: number | null;
   height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Configuración global del sitio
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  siteName?: string | null;
+  siteDescription?: string | null;
+  logo?: (number | null) | Media;
+  favicon?: (number | null) | Media;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  contactWhatsapp?: string | null;
+  address?: string | null;
+  apiKeys?: {
+    serperApiKey?: string | null;
+    glmApiKey?: string | null;
+    telegramBotToken?: string | null;
+    telegramAdminChatId?: string | null;
+  };
+  glmConfig?: {
+    model?: ('glm-5' | 'glm-4.7' | 'glm-4.6') | null;
+    temperature?: number | null;
+    maxTokens?: number | null;
+  };
+  limits?: {
+    serperMonthlyLimit?: number | null;
+    glmMonthlyLimit?: number | null;
+    currentSerperUsage?: number | null;
+    currentGlmUsage?: number | null;
+    billingPeriodStart?: string | null;
+  };
+  leadsConfig?: {
+    autoAssign?: boolean | null;
+    notifyOnNewLead?: boolean | null;
+    defaultScore?: number | null;
+  };
+  social?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Comunas de la Región Metropolitana
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations".
+ */
+export interface Location {
+  id: number;
+  name: string;
+  /**
+   * Ej: las-condes, providencia, santiago-centro
+   */
+  slug: string;
+  region?: 'rm' | null;
+  geoZone: 'oriente' | 'nororiente' | 'norte' | 'poniente' | 'suroriente' | 'sur' | 'centro';
+  tier?: ('premium' | 'high' | 'medium' | 'emerging') | null;
+  /**
+   * Descripción de la comuna para contenido SEO
+   */
+  characteristics?: string | null;
+  population?: number | null;
+  coordinates?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
+  /**
+   * Keywords principales para SEO de esta comuna
+   */
+  mainKeywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  serviceAreas?:
+    | {
+        area?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Mayor número = más importante para SEO
+   */
+  priorityScore?: number | null;
+  isActive?: boolean | null;
+  seo?: {
+    /**
+     * Título para SEO (si está vacío usa el nombre)
+     */
+    metaTitle?: string | null;
+    /**
+     * Descripción para SEO
+     */
+    metaDescription?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Barrios y urbanizaciones dentro de las comunas
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "neighborhoods".
+ */
+export interface Neighborhood {
+  id: number;
+  name: string;
+  slug: string;
+  /**
+   * Comuna a la que pertenece este barrio
+   */
+  location: number | Location;
+  description?: string | null;
+  /**
+   * Tipo de barrio: residencial, comercial, industrial, etc.
+   */
+  characteristics?: string | null;
+  coordinates?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
+  mainKeywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  priorityScore?: number | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Servicios de seguridad ofrecidos
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * Ej: guardias-de-seguridad, monitoreo-24-7
+   */
+  slug: string;
+  /**
+   * Descripción breve para tarjetas y listados
+   */
+  shortDescription?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Emoji para mostrar en tarjetas
+   */
+  icon?: string | null;
+  featuredImage?: (number | null) | Media;
+  /**
+   * Características del servicio
+   */
+  features?:
+    | {
+        feature?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  benefits?:
+    | {
+        benefit?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  priceRange?: {
+    min?: number | null;
+    max?: number | null;
+    billingPeriod?: ('month' | 'shift' | 'hour' | 'service') | null;
+    hidePrice?: boolean | null;
+  };
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedLocations?: (number | Location)[] | null;
+  relatedIndustries?: (number | Industry)[] | null;
+  relatedProblems?: (number | Problem)[] | null;
+  faq?:
+    | {
+        question?: string | null;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Mostrar en página principal
+   */
+  isHighlighted?: boolean | null;
+  isActive?: boolean | null;
+  /**
+   * Menor número = aparece primero
+   */
+  order?: number | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Industrias que atendemos
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "industries".
+ */
+export interface Industry {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  icon?: string | null;
+  image?: (number | null) | Media;
+  relatedServices?: (number | Service)[] | null;
+  /**
+   * Roles típicos en esta industria
+   */
+  targetPersonas?:
+    | {
+        persona?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  features?:
+    | {
+        feature?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Datos para contenido SEO
+   */
+  statistics?: {
+    marketSize?: string | null;
+    growthRate?: string | null;
+    mainRisks?:
+      | {
+          risk?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  caseStudy?: (number | null) | Blog;
+  isActive?: boolean | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Artículos del blog
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog".
+ */
+export interface Blog {
+  id: number;
+  title: string;
+  /**
+   * Ej: como-elegir-servicio-seguridad
+   */
+  slug: string;
+  /**
+   * Breve descripción para tarjetas y SEO (160 caracteres)
+   */
+  excerpt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (number | null) | Media;
+  category?: ('security-tips' | 'news' | 'case-studies' | 'guides' | 'business-security' | 'home-security') | null;
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedLocations?: (number | Location)[] | null;
+  relatedServices?: (number | Service)[] | null;
+  relatedProblems?: (number | Problem)[] | null;
+  author?: (number | null) | User;
+  seo?: {
+    /**
+     * Título para SEO (60 caracteres máx)
+     */
+    metaTitle?: string | null;
+    /**
+     * Descripción para SEO (160 caracteres máx)
+     */
+    metaDescription?: string | null;
+    canonicalUrl?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  status?: ('draft' | 'review' | 'published' | 'archived') | null;
+  publishedAt?: string | null;
+  featured?: boolean | null;
+  views?: number | null;
+  /**
+   * Tiempo estimado de lectura
+   */
+  readingTime?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Problemas de seguridad que buscan los clientes (keywords SEO)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "problems".
+ */
+export interface Problem {
+  id: number;
+  /**
+   * Ej: Robos en condominios, Falta de seguridad
+   */
+  name: string;
+  slug: string;
+  /**
+   * Descripción del problema para contenido SEO
+   */
+  description?: string | null;
+  relatedServices?: (number | Service)[] | null;
+  /**
+   * Palabras clave relacionadas con este problema
+   */
+  keywords?:
+    | {
+        keyword?: string | null;
+        intent?: ('informational' | 'commercial' | 'transactional') | null;
+        volume?: ('high' | 'medium' | 'low') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Por qué el cliente busca este servicio
+   */
+  painPoints?:
+    | {
+        painPoint?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Datos obtenidos de la API de Serper
+   */
+  serperData?: {
+    newsCount?: number | null;
+    searchVolume?: number | null;
+    trending?: ('rising' | 'stable' | 'declining') | null;
+    lastChecked?: string | null;
+  };
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Soluciones específicas para cada necesidad
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions".
+ */
+export interface Solution {
+  id: number;
+  title: string;
+  slug: string;
+  shortDescription?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  icon?: string | null;
+  image?: (number | null) | Media;
+  industry?: (number | null) | Industry;
+  targetPersonas?:
+    | {
+        persona?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedServices?: (number | Service)[] | null;
+  includes?:
+    | {
+        item?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  benefits?:
+    | {
+        benefit?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  pricing?: {
+    min?: number | null;
+    max?: number | null;
+    billingPeriod?: ('month' | 'service') | null;
+    hidePrice?: boolean | null;
+  };
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  faq?:
+    | {
+        question?: string | null;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  isHighlighted?: boolean | null;
+  isActive?: boolean | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Personas objetivo (clientes ideales)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "personas".
+ */
+export interface Persona {
+  id: number;
+  name: string;
+  slug: string;
+  /**
+   * Ej: Administrador de Condominio
+   */
+  title: string;
+  description?: string | null;
+  avatar?: (number | null) | Media;
+  demographics?: {
+    ageRange?: string | null;
+    location?: string | null;
+    incomeLevel?: ('premium' | 'high' | 'medium' | 'emerging') | null;
+  };
+  /**
+   * Problemas que busca resolver
+   */
+  painPoints?:
+    | {
+        pain?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  needs?:
+    | {
+        need?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  goals?:
+    | {
+        goal?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  preferredServices?: (number | Service)[] | null;
+  budgetRange?: {
+    min?: number | null;
+    max?: number | null;
+  };
+  decisionTimeline?: ('immediate' | 'short' | 'medium' | 'long') | null;
+  /**
+   * Keywords que usa esta persona
+   */
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedIndustries?: (number | Industry)[] | null;
+  communication?: {
+    preferredChannel?: ('phone' | 'email' | 'whatsapp' | 'in_person') | null;
+    tone?: ('formal' | 'semi_formal' | 'informal') | null;
+  };
+  /**
+   * Puntos base para scoring de leads
+   */
+  scoring?: {
+    baseScore?: number | null;
+    urgencyWeight?: number | null;
+  };
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Leads captados desde formularios
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads".
+ */
+export interface Lead {
+  id: number;
+  name: string;
+  email?: string | null;
+  phone: string;
+  company?: string | null;
+  message: string;
+  source?: {
+    /**
+     * Página donde se captó el lead
+     */
+    pageUrl?: string | null;
+    location?: (number | null) | Location;
+    neighborhood?: (number | null) | Neighborhood;
+    service?: (number | null) | Service;
+    referrer?: string | null;
+    normalizedPhone?: string | null;
+    formId?: string | null;
+    utmSource?: string | null;
+    utmMedium?: string | null;
+    utmCampaign?: string | null;
+  };
+  /**
+   * Datos preenchidos automaticamente pelo GLM
+   */
+  internalClassification?: {
+    detectedPersona?:
+      | (
+          | 'presidente_comunidad'
+          | 'admin_condominio'
+          | 'gerente_general'
+          | 'dueno_casa'
+          | 'encargado_seguridad'
+          | 'otro'
+        )
+      | null;
+    detectedProblems?:
+      | {
+          problem?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    estimatedBudget?: ('low' | 'medium' | 'high' | 'enterprise') | null;
+    urgency?: ('high' | 'medium' | 'low') | null;
+    analyzedAt?: string | null;
+    modelUsed?: string | null;
+  };
+  /**
+   * Puntuación automática del lead
+   */
+  score?: number | null;
+  smartAction?: ('URGENT_CONTACT' | 'FOLLOW_UP' | 'AI_DELEGATE' | 'REACTIVATE' | 'NOT_QUALIFIED') | null;
+  /**
+   * Estado del lead en el embudo
+   */
+  status?: ('new' | 'contacted' | 'quoting' | 'converted' | 'lost') | null;
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Vendedor responsable del lead
+   */
+  assignedTo?: (number | null) | User;
+  notes?:
+    | {
+        note?: string | null;
+        date?: string | null;
+        user?: (number | null) | User;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Historial de seguimientos
+   */
+  followUps?:
+    | {
+        date?: string | null;
+        type?: ('call' | 'email' | 'whatsapp' | 'visit') | null;
+        result?: ('no_answer' | 'interested' | 'not_interested' | 'callback') | null;
+        nextAction?: string | null;
+        nextFollowUp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Si fue generado automáticamente por prospección
+   */
+  isAutoGenerated?: boolean | null;
+  createdAt: string;
+  updatedAt: string;
+  lastContactedAt?: string | null;
+  convertedAt?: string | null;
+}
+/**
+ * Registro de teléfonos duplicados
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lead-duplicates".
+ */
+export interface LeadDuplicate {
+  id: number;
+  /**
+   * Teléfono en formato: +569XXXXXXXX
+   */
+  normalizedPhone: string;
+  leadIds?:
+    | {
+        leadId?: string | null;
+        createdAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  occurrenceCount?: number | null;
+  firstSeen?: string | null;
+  lastSeen?: string | null;
+  status?: ('unresolved' | 'false_positive' | 'same_customer' | 'resolved') | null;
+  resolution?: {
+    resolvedBy?: (number | null) | User;
+    resolvedAt?: string | null;
+    notes?: string | null;
+  };
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Configura los pesos del scoring de leads
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scoring-rules".
+ */
+export interface ScoringRule {
+  id: number;
+  /**
+   * Ej: Regla default, Regula premium
+   */
+  name: string;
+  description?: string | null;
+  /**
+   * Solo una regla puede estar activa a la vez
+   */
+  isActive?: boolean | null;
+  /**
+   * Puntos según el tipo de persona detectada
+   */
+  personaWeights?:
+    | {
+        persona?:
+          | (
+              | 'presidente_comunidad'
+              | 'admin_condominio'
+              | 'gerente_general'
+              | 'dueno_casa'
+              | 'encargado_seguridad'
+              | 'otro'
+            )
+          | null;
+        weight?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  budgetWeights?:
+    | {
+        budget?: ('enterprise' | 'high' | 'medium' | 'low') | null;
+        weight?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  urgencyWeights?:
+    | {
+        urgency?: ('high' | 'medium' | 'low') | null;
+        weight?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Puntos adicionales si el mensaje tiene detalles específicos
+   */
+  messageQualityWeight?: number | null;
+  actionThresholds?: {
+    urgentContact?: number | null;
+    followUp?: number | null;
+    notQualified?: number | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Páginas SEO geolocalizadas
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-pages".
+ */
+export interface SeoPage {
+  id: number;
+  title: string;
+  /**
+   * Ej: seguridad-las-condes-guardias
+   */
+  slug: string;
+  pageType:
+    | 'location'
+    | 'service'
+    | 'industry'
+    | 'persona'
+    | 'service-location'
+    | 'industry-location'
+    | 'persona-location'
+    | 'problem-location';
+  location?: (number | null) | Location;
+  service?: (number | null) | Service;
+  industry?: (number | null) | Industry;
+  persona?: (number | null) | Persona;
+  problem?: (number | null) | Problem;
+  seo?: {
+    /**
+     * Título para搜索引擎 (60 caracteres máx)
+     */
+    metaTitle?: string | null;
+    /**
+     * Descripción para搜索引擎 (160 caracteres máx)
+     */
+    metaDescription?: string | null;
+    h1?: string | null;
+    canonicalUrl?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  hero?: {
+    headline?: string | null;
+    subheadline?: string | null;
+    ctaText?: string | null;
+    ctaLink?: string | null;
+    backgroundImage?: (number | null) | Media;
+  };
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  highlights?:
+    | {
+        text?: string | null;
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  priceRange?: {
+    min?: number | null;
+    max?: number | null;
+    billingPeriod?: ('month' | 'service' | 'shift') | null;
+    hidePrice?: boolean | null;
+  };
+  faq?:
+    | {
+        question?: string | null;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  testimonials?: (number | Testimonial)[] | null;
+  glmGenerated?: boolean | null;
+  serperEnriched?: boolean | null;
+  glmAnalysis?: {
+    score?: number | null;
+    opportunities?:
+      | {
+          opportunity?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    recommendedKeywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Mayor número = más importante para generar
+   */
+  priorityScore?: number | null;
+  status?: ('draft' | 'published' | 'archived') | null;
+  publishedAt?: string | null;
+  views?: number | null;
+  /**
+   * Schema markup personalizado
+   */
+  schemaMarkup?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Testimonios de clientes
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  clientName: string;
+  company?: string | null;
+  position?: string | null;
+  testimonial: string;
+  rating?: number | null;
+  location?: (number | null) | Location;
+  neighborhood?: (number | null) | Neighborhood;
+  service?: (number | Service)[] | null;
+  industry?: (number | null) | Industry;
+  photo?: (number | null) | Media;
+  videoUrl?: string | null;
+  /**
+   * Solo mostrar testimonios aprobados
+   */
+  isApproved?: boolean | null;
+  /**
+   * Mostrar en página principal
+   */
+  isFeatured?: boolean | null;
+  useInHomepage?: boolean | null;
+  useInLocationPages?: boolean | null;
+  /**
+   * Menor número = aparece primero
+   */
+  order?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * Keywords para SEO
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "keywords".
+ */
+export interface Keyword {
+  id: number;
+  keyword: string;
+  type: 'location' | 'service' | 'service-location' | 'problem-location' | 'long-tail';
+  location?: (number | null) | Location;
+  service?: (number | null) | Service;
+  problem?: (number | null) | Problem;
+  /**
+   * Grupo de keywords relacionadas
+   */
+  cluster?: string | null;
+  relatedKeywords?:
+    | {
+        keyword?: string | null;
+        intent?: ('informational' | 'commercial' | 'transactional') | null;
+        id?: string | null;
+      }[]
+    | null;
+  intent?: ('informational' | 'commercial' | 'transactional') | null;
+  serperMetrics?: {
+    resultCount?: number | null;
+    adsCount?: number | null;
+    topCompetitors?:
+      | {
+          competitor?: string | null;
+          position?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+    searchedAt?: string | null;
+  };
+  glmAnalysis?: {
+    difficulty?: number | null;
+    volume?: ('high' | 'medium' | 'low') | null;
+    opportunity?: ('high' | 'medium' | 'low') | null;
+    recommendedUrl?: string | null;
+    analyzedAt?: string | null;
+  };
+  isTracked?: boolean | null;
+  targetPosition?: number | null;
+  currentPosition?: number | null;
+  priority?: ('high' | 'medium' | 'low') | null;
+  seoPage?: (number | null) | SeoPage;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * Formularios del sitio
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  title: string;
+  /**
+   * Ej: contacto, cotizacion, presupuesto
+   */
+  slug: string;
+  description?: string | null;
+  submitButtonLabel?: string | null;
+  confirmationType?: ('message' | 'redirect') | null;
+  /**
+   * Mensaje mostrado después de enviar
+   */
+  confirmationMessage?: string | null;
+  redirectUrl?: string | null;
+  sendConfirmationEmail?: boolean | null;
+  confirmationEmailSubject?: string | null;
+  /**
+   * Al enviar, crear un lead en la colección
+   */
+  createLead?: boolean | null;
+  leadConfig?: {
+    /**
+     * Valor para el campo source
+     */
+    defaultSource?: string | null;
+    /**
+     * Usuario asignado por defecto
+     */
+    assignTo?: (number | null) | User;
+    addTags?:
+      | {
+          tag?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    notifyOnSubmit?: boolean | null;
+  };
+  enableCaptcha?: boolean | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Respuestas de formularios
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions".
+ */
+export interface FormSubmission {
+  id: number;
+  form: number | Form;
+  submissionData:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  ip?: string | null;
+  userAgent?: string | null;
+  referrer?: string | null;
+  /**
+   * Lead generado a partir de esta submission
+   */
+  lead?: (number | null) | Lead;
+  status?: ('processed' | 'error' | 'email_sent') | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -187,6 +1316,74 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'settings';
+        value: number | Setting;
+      } | null)
+    | ({
+        relationTo: 'locations';
+        value: number | Location;
+      } | null)
+    | ({
+        relationTo: 'neighborhoods';
+        value: number | Neighborhood;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'problems';
+        value: number | Problem;
+      } | null)
+    | ({
+        relationTo: 'industries';
+        value: number | Industry;
+      } | null)
+    | ({
+        relationTo: 'solutions';
+        value: number | Solution;
+      } | null)
+    | ({
+        relationTo: 'personas';
+        value: number | Persona;
+      } | null)
+    | ({
+        relationTo: 'leads';
+        value: number | Lead;
+      } | null)
+    | ({
+        relationTo: 'lead-duplicates';
+        value: number | LeadDuplicate;
+      } | null)
+    | ({
+        relationTo: 'scoring-rules';
+        value: number | ScoringRule;
+      } | null)
+    | ({
+        relationTo: 'seo-pages';
+        value: number | SeoPage;
+      } | null)
+    | ({
+        relationTo: 'keywords';
+        value: number | Keyword;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'blog';
+        value: number | Blog;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
+      } | null)
+    | ({
+        relationTo: 'form-submissions';
+        value: number | FormSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -235,6 +1432,50 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  avatar?: T;
+  phone?: T;
+  isActive?: T;
+  telegram?:
+    | T
+    | {
+        chatId?: T;
+        username?: T;
+        notificationsEnabled?: T;
+        notifyOnNewLead?: T;
+        notifyOnStatusChange?: T;
+      };
+  salesProfile?:
+    | T
+    | {
+        preferredZones?:
+          | T
+          | {
+              zone?: T;
+              id?: T;
+            };
+        specializations?:
+          | T
+          | {
+              persona?: T;
+              id?: T;
+            };
+        workingHours?:
+          | T
+          | {
+              start?: T;
+              end?: T;
+            };
+        maxPendingLeads?: T;
+      };
+  stats?:
+    | T
+    | {
+        totalLeads?: T;
+        convertedLeads?: T;
+        conversionRate?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -258,6 +1499,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -267,6 +1509,818 @@ export interface MediaSelect<T extends boolean = true> {
   filesize?: T;
   width?: T;
   height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  siteDescription?: T;
+  logo?: T;
+  favicon?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  contactWhatsapp?: T;
+  address?: T;
+  apiKeys?:
+    | T
+    | {
+        serperApiKey?: T;
+        glmApiKey?: T;
+        telegramBotToken?: T;
+        telegramAdminChatId?: T;
+      };
+  glmConfig?:
+    | T
+    | {
+        model?: T;
+        temperature?: T;
+        maxTokens?: T;
+      };
+  limits?:
+    | T
+    | {
+        serperMonthlyLimit?: T;
+        glmMonthlyLimit?: T;
+        currentSerperUsage?: T;
+        currentGlmUsage?: T;
+        billingPeriodStart?: T;
+      };
+  leadsConfig?:
+    | T
+    | {
+        autoAssign?: T;
+        notifyOnNewLead?: T;
+        defaultScore?: T;
+      };
+  social?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "locations_select".
+ */
+export interface LocationsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  region?: T;
+  geoZone?: T;
+  tier?: T;
+  characteristics?: T;
+  population?: T;
+  coordinates?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
+      };
+  mainKeywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  serviceAreas?:
+    | T
+    | {
+        area?: T;
+        id?: T;
+      };
+  priorityScore?: T;
+  isActive?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "neighborhoods_select".
+ */
+export interface NeighborhoodsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  location?: T;
+  description?: T;
+  characteristics?: T;
+  coordinates?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
+      };
+  mainKeywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  priorityScore?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  shortDescription?: T;
+  description?: T;
+  icon?: T;
+  featuredImage?: T;
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  benefits?:
+    | T
+    | {
+        benefit?: T;
+        id?: T;
+      };
+  priceRange?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+        billingPeriod?: T;
+        hidePrice?: T;
+      };
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  relatedLocations?: T;
+  relatedIndustries?: T;
+  relatedProblems?: T;
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  isHighlighted?: T;
+  isActive?: T;
+  order?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "problems_select".
+ */
+export interface ProblemsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  relatedServices?: T;
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        intent?: T;
+        volume?: T;
+        id?: T;
+      };
+  painPoints?:
+    | T
+    | {
+        painPoint?: T;
+        id?: T;
+      };
+  serperData?:
+    | T
+    | {
+        newsCount?: T;
+        searchVolume?: T;
+        trending?: T;
+        lastChecked?: T;
+      };
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "industries_select".
+ */
+export interface IndustriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  icon?: T;
+  image?: T;
+  relatedServices?: T;
+  targetPersonas?:
+    | T
+    | {
+        persona?: T;
+        id?: T;
+      };
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  statistics?:
+    | T
+    | {
+        marketSize?: T;
+        growthRate?: T;
+        mainRisks?:
+          | T
+          | {
+              risk?: T;
+              id?: T;
+            };
+      };
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  caseStudy?: T;
+  isActive?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions_select".
+ */
+export interface SolutionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  shortDescription?: T;
+  description?: T;
+  icon?: T;
+  image?: T;
+  industry?: T;
+  targetPersonas?:
+    | T
+    | {
+        persona?: T;
+        id?: T;
+      };
+  relatedServices?: T;
+  includes?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  benefits?:
+    | T
+    | {
+        benefit?: T;
+        id?: T;
+      };
+  pricing?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+        billingPeriod?: T;
+        hidePrice?: T;
+      };
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  isHighlighted?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "personas_select".
+ */
+export interface PersonasSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  title?: T;
+  description?: T;
+  avatar?: T;
+  demographics?:
+    | T
+    | {
+        ageRange?: T;
+        location?: T;
+        incomeLevel?: T;
+      };
+  painPoints?:
+    | T
+    | {
+        pain?: T;
+        id?: T;
+      };
+  needs?:
+    | T
+    | {
+        need?: T;
+        id?: T;
+      };
+  goals?:
+    | T
+    | {
+        goal?: T;
+        id?: T;
+      };
+  preferredServices?: T;
+  budgetRange?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+      };
+  decisionTimeline?: T;
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  relatedIndustries?: T;
+  communication?:
+    | T
+    | {
+        preferredChannel?: T;
+        tone?: T;
+      };
+  scoring?:
+    | T
+    | {
+        baseScore?: T;
+        urgencyWeight?: T;
+      };
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads_select".
+ */
+export interface LeadsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  company?: T;
+  message?: T;
+  source?:
+    | T
+    | {
+        pageUrl?: T;
+        location?: T;
+        neighborhood?: T;
+        service?: T;
+        referrer?: T;
+        normalizedPhone?: T;
+        formId?: T;
+        utmSource?: T;
+        utmMedium?: T;
+        utmCampaign?: T;
+      };
+  internalClassification?:
+    | T
+    | {
+        detectedPersona?: T;
+        detectedProblems?:
+          | T
+          | {
+              problem?: T;
+              id?: T;
+            };
+        estimatedBudget?: T;
+        urgency?: T;
+        analyzedAt?: T;
+        modelUsed?: T;
+      };
+  score?: T;
+  smartAction?: T;
+  status?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  assignedTo?: T;
+  notes?:
+    | T
+    | {
+        note?: T;
+        date?: T;
+        user?: T;
+        id?: T;
+      };
+  followUps?:
+    | T
+    | {
+        date?: T;
+        type?: T;
+        result?: T;
+        nextAction?: T;
+        nextFollowUp?: T;
+        id?: T;
+      };
+  isAutoGenerated?: T;
+  createdAt?: T;
+  updatedAt?: T;
+  lastContactedAt?: T;
+  convertedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lead-duplicates_select".
+ */
+export interface LeadDuplicatesSelect<T extends boolean = true> {
+  normalizedPhone?: T;
+  leadIds?:
+    | T
+    | {
+        leadId?: T;
+        createdAt?: T;
+        id?: T;
+      };
+  occurrenceCount?: T;
+  firstSeen?: T;
+  lastSeen?: T;
+  status?: T;
+  resolution?:
+    | T
+    | {
+        resolvedBy?: T;
+        resolvedAt?: T;
+        notes?: T;
+      };
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scoring-rules_select".
+ */
+export interface ScoringRulesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  isActive?: T;
+  personaWeights?:
+    | T
+    | {
+        persona?: T;
+        weight?: T;
+        id?: T;
+      };
+  budgetWeights?:
+    | T
+    | {
+        budget?: T;
+        weight?: T;
+        id?: T;
+      };
+  urgencyWeights?:
+    | T
+    | {
+        urgency?: T;
+        weight?: T;
+        id?: T;
+      };
+  messageQualityWeight?: T;
+  actionThresholds?:
+    | T
+    | {
+        urgentContact?: T;
+        followUp?: T;
+        notQualified?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-pages_select".
+ */
+export interface SeoPagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  pageType?: T;
+  location?: T;
+  service?: T;
+  industry?: T;
+  persona?: T;
+  problem?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        h1?: T;
+        canonicalUrl?: T;
+        ogImage?: T;
+      };
+  hero?:
+    | T
+    | {
+        headline?: T;
+        subheadline?: T;
+        ctaText?: T;
+        ctaLink?: T;
+        backgroundImage?: T;
+      };
+  content?: T;
+  highlights?:
+    | T
+    | {
+        text?: T;
+        icon?: T;
+        id?: T;
+      };
+  priceRange?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+        billingPeriod?: T;
+        hidePrice?: T;
+      };
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  testimonials?: T;
+  glmGenerated?: T;
+  serperEnriched?: T;
+  glmAnalysis?:
+    | T
+    | {
+        score?: T;
+        opportunities?:
+          | T
+          | {
+              opportunity?: T;
+              id?: T;
+            };
+        recommendedKeywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+      };
+  priorityScore?: T;
+  status?: T;
+  publishedAt?: T;
+  views?: T;
+  schemaMarkup?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "keywords_select".
+ */
+export interface KeywordsSelect<T extends boolean = true> {
+  keyword?: T;
+  type?: T;
+  location?: T;
+  service?: T;
+  problem?: T;
+  cluster?: T;
+  relatedKeywords?:
+    | T
+    | {
+        keyword?: T;
+        intent?: T;
+        id?: T;
+      };
+  intent?: T;
+  serperMetrics?:
+    | T
+    | {
+        resultCount?: T;
+        adsCount?: T;
+        topCompetitors?:
+          | T
+          | {
+              competitor?: T;
+              position?: T;
+              id?: T;
+            };
+        searchedAt?: T;
+      };
+  glmAnalysis?:
+    | T
+    | {
+        difficulty?: T;
+        volume?: T;
+        opportunity?: T;
+        recommendedUrl?: T;
+        analyzedAt?: T;
+      };
+  isTracked?: T;
+  targetPosition?: T;
+  currentPosition?: T;
+  priority?: T;
+  seoPage?: T;
+  createdAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  clientName?: T;
+  company?: T;
+  position?: T;
+  testimonial?: T;
+  rating?: T;
+  location?: T;
+  neighborhood?: T;
+  service?: T;
+  industry?: T;
+  photo?: T;
+  videoUrl?: T;
+  isApproved?: T;
+  isFeatured?: T;
+  useInHomepage?: T;
+  useInLocationPages?: T;
+  order?: T;
+  createdAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog_select".
+ */
+export interface BlogSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  content?: T;
+  featuredImage?: T;
+  category?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  relatedLocations?: T;
+  relatedServices?: T;
+  relatedProblems?: T;
+  author?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        canonicalUrl?: T;
+        ogImage?: T;
+      };
+  status?: T;
+  publishedAt?: T;
+  featured?: T;
+  views?: T;
+  readingTime?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  submitButtonLabel?: T;
+  confirmationType?: T;
+  confirmationMessage?: T;
+  redirectUrl?: T;
+  sendConfirmationEmail?: T;
+  confirmationEmailSubject?: T;
+  createLead?: T;
+  leadConfig?:
+    | T
+    | {
+        defaultSource?: T;
+        assignTo?: T;
+        addTags?:
+          | T
+          | {
+              tag?: T;
+              id?: T;
+            };
+        notifyOnSubmit?: T;
+      };
+  enableCaptcha?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  form?: T;
+  submissionData?: T;
+  ip?: T;
+  userAgent?: T;
+  referrer?: T;
+  lead?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
