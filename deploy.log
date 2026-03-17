@@ -1,0 +1,19 @@
+
+> guardman-core@1.0.0 deploy C:\Users\56930\OneDrive\Escritorio\guardman-gateway
+> pnpm run deploy:database && pnpm run deploy:app
+
+
+> guardman-core@1.0.0 deploy:database C:\Users\56930\OneDrive\Escritorio\guardman-gateway
+> cross-env NODE_ENV=production PAYLOAD_SECRET=ignore payload migrate
+
+(node:22360) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Using secrets defined in .env
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+{"level":"warn","msg":"No email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview."}
+{"level":"warn","msg":"Image resizing is enabled for one or more collections, but sharp not installed. Please install 'sharp' and pass into the config."}
+{"level":"info","msg":"Reading migration files from C:\\Users\\56930\\OneDrive\\Escritorio\\guardman-gateway\\src\\migrations"}
+{"level":"info","msg":"Migrating: 20260317_051403_initial"}
+{"level":"error","err":{"query":"CREATE TABLE `users_sales_profile_preferred_zones` (\n  \t`_order` integer NOT NULL,\n  \t`_parent_id` integer NOT NULL,\n  \t`id` text PRIMARY KEY NOT NULL,\n  \t`zone` text,\n  \tFOREIGN KEY (`_parent_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade\n  );\n  ","params":[],"cause":{}},"msg":"Error running migration 20260317_051403_initial Failed query: CREATE TABLE `users_sales_profile_preferred_zones` (\n  \t`_order` integer NOT NULL,\n  \t`_parent_id` integer NOT NULL,\n  \t`id` text PRIMARY KEY NOT NULL,\n  \t`zone` text,\n  \tFOREIGN KEY (`_parent_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade\n  );\n  \nparams: ."}
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 1.
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 1.

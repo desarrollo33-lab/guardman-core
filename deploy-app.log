@@ -1,0 +1,239 @@
+
+> guardman-core@1.0.0 deploy:app C:\Users\56930\OneDrive\Escritorio\guardman-gateway
+> opennextjs-cloudflare build --env=$CLOUDFLARE_ENV && opennextjs-cloudflare deploy --env=$CLOUDFLARE_ENV
+
+
+ÔöîÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÉ
+Ôöé OpenNext ÔÇö Cloudflare build Ôöé
+ÔööÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÿ
+
+WARN OpenNext is not fully compatible with Windows.
+WARN For optimal performance, it is recommended to use Windows Subsystem for Linux (WSL).
+WARN While OpenNext may function on Windows, it could encounter unpredictable failures during runtime.
+Ôû▓ [WARNING] Processing wrangler.jsonc configuration:
+
+    - No environment found in configuration with name "$CLOUDFLARE_ENV".
+      Before using `--env=$CLOUDFLARE_ENV` there should be an equivalent environment section in the configuration.
+  
+      Consider adding an environment configuration section to the wrangler.jsonc file:
+      ```
+      [env.$CLOUDFLARE_ENV]
+      ```
+  
+
+
+App directory: C:\Users\56930\OneDrive\Escritorio\guardman-gateway
+Next.js version : 15.4.11
+@opennextjs/cloudflare version: 1.17.1
+@opennextjs/aws version: 3.9.16
+
+ÔöîÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÉ
+Ôöé OpenNext ÔÇö Building Next.js app Ôöé
+ÔööÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÿ
+
+
+> guardman-core@1.0.0 build C:\Users\56930\OneDrive\Escritorio\guardman-gateway
+> cross-env NODE_OPTIONS="--no-deprecation --max-old-space-size=8000" next build
+
+   Ôû▓ Next.js 15.4.11
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 16.0s
+   Linting and checking validity of types ...
+
+./src/app/api/guardman/data/route.ts
+71:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+75:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/guardman/leads/check-duplicate/route.ts
+52:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/guardman/sitemap.xml/route.ts
+12:27  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/my-route/route.ts
+4:27  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+5:9  Warning: 'payload' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/components/Avatar/index.tsx
+15:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+24:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+40:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/hooks/index.ts
+12:1  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+./src/hooks/leads/assignLead.ts
+83:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+90:20  Warning: 'e' is defined but never used. Allowed unused caught errors must match /^(_|ignore)/u.  @typescript-eslint/no-unused-vars
+
+./src/hooks/leads/detectDuplicate.ts
+45:67  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/leads/enrichLead.ts
+22:3  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/hooks/leads/scoreLead.ts
+24:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+53:41  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+71:10  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+80:11  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+91:11  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+101:11  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+112:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+158:18  Warning: 'e' is defined but never used. Allowed unused caught errors must match /^(_|ignore)/u.  @typescript-eslint/no-unused-vars
+217:12  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/migrations/20250929_111647.ts
+3:32  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+3:41  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+148:34  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+148:43  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/migrations/20260317_051403_initial.ts
+3:32  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+3:41  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+1130:34  Warning: 'payload' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+1130:43  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/payload.config.ts
+39:6  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/router.ts
+6:8  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+7:11  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+12:1  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+./src/services/index.ts
+20:1  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+   Generating static pages (0/10) ...
+   Generating static pages (2/10) 
+   Generating static pages (4/10) 
+[API] Error generating sitemap: TypeError: fetch failed
+    at async w (C:\Users\56930\OneDrive\Escritorio\guardman-gateway\.next\server\app\api\guardman\sitemap.xml\route.js:1:782) {
+  [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+}
+   Generating static pages (7/10) 
+[OPENNEXT] Payload Config Cloudflare Context: true D1: true
+ Ô£ô Generating static pages (10/10)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+Ôöî Ôùï /_not-found                            999 B         102 kB
+Ôö£ ãÆ /admin/[[...segments]]                 392 B         558 kB
+Ôö£ ãÆ /api/[...slug]                         177 B         101 kB
+Ôö£ ãÆ /api/graphql                           146 B         101 kB
+Ôö£ ãÆ /api/graphql-playground                177 B         101 kB
+Ôö£ ãÆ /api/guardman/data                     146 B         101 kB
+Ôö£ ãÆ /api/guardman/leads                    146 B         101 kB
+Ôö£ ãÆ /api/guardman/leads/check-duplicate    146 B         101 kB
+Ôö£ Ôùï /api/guardman/sitemap.xml              146 B         101 kB
+Ôöö ãÆ /my-route                              146 B         101 kB
++ First Load JS shared by all             101 kB
+  Ôö£ chunks/4bd1b696-cc729d47eba2cee4.js  54.1 kB
+  Ôö£ chunks/5964-217149ecc4b4e5f3.js        44 kB
+  Ôöö other shared chunks (total)          2.74 kB
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
+
+ÔöîÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÉ
+Ôöé OpenNext ÔÇö Generating bundle Ôöé
+ÔööÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÿ
+
+(node:15464) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Bundling middleware function...
+Bundling static assets...
+Bundling cache assets...
+Building server function: default...
+Applying code patches: 7.050s
+# copyPackageTemplateFiles
+[35mÔÜÖ´©Å Bundling the OpenNext server...
+[0m
+[35mWorker saved in `.open-next\worker.js` ­ƒÜÇ
+[0m
+OpenNext build complete.
+
+ÔöîÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÉ
+Ôöé OpenNext ÔÇö Cloudflare deploy Ôöé
+ÔööÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÿ
+
+WARN OpenNext is not fully compatible with Windows.
+WARN For optimal performance, it is recommended to use Windows Subsystem for Linux (WSL).
+WARN While OpenNext may function on Windows, it could encounter unpredictable failures during runtime.
+Ôû▓ [WARNING] Processing wrangler.jsonc configuration:
+
+    - No environment found in configuration with name "$CLOUDFLARE_ENV".
+      Before using `--env=$CLOUDFLARE_ENV` there should be an equivalent environment section in the configuration.
+  
+      Consider adding an environment configuration section to the wrangler.jsonc file:
+      ```
+      [env.$CLOUDFLARE_ENV]
+      ```
+  
+
+
+(node:12728) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Incremental cache does not need populating
+Tag cache does not need populating
+
+ Ôøà´©Å wrangler 4.74.0
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+Ôû▓ [WARNING] Processing wrangler.jsonc configuration:
+
+    - No environment found in configuration with name "$CLOUDFLARE_ENV".
+      Before using `--env=$CLOUDFLARE_ENV` there should be an equivalent environment section in the configuration.
+  
+      Consider adding an environment configuration section to the wrangler.jsonc file:
+      ```
+      [env.$CLOUDFLARE_ENV]
+      ```
+  
+
+
+X [ERROR] A request to the Cloudflare API (/accounts/b3a89fc9524552b7ab3202269f1ab6f3/workers/services/guardman-core-$CLOUDFLARE_ENV) failed.
+
+  Invalid Worker name. Ensure the name is lowercase, alphanumeric, and contains no spaces or special characters except dashes. [code: 10016]
+  
+  If you think this is a bug, please open an issue at: https://github.com/cloudflare/workers-sdk/issues/new/choose
+
+
+­ƒ¬Á  Logs were written to "C:\Users\56930\.wrangler\logs\wrangler-2026-03-17_15-48-24_612.log"
+ERROR Wrangler deploy command failed:
+Ôû▓ [WARNING] Processing wrangler.jsonc configuration:
+
+    - No environment found in configuration with name "$CLOUDFLARE_ENV".
+      Before using `--env=$CLOUDFLARE_ENV` there should be an equivalent environment section in the configuration.
+  
+      Consider adding an environment configuration section to the wrangler.jsonc file:
+      ```
+      [env.$CLOUDFLARE_ENV]
+      ```
+  
+
+
+X [ERROR] A request to the Cloudflare API (/accounts/b3a89fc9524552b7ab3202269f1ab6f3/workers/services/guardman-core-$CLOUDFLARE_ENV) failed.
+
+  Invalid Worker name. Ensure the name is lowercase, alphanumeric, and contains no spaces or special characters except dashes. [code: 10016]
+  
+  If you think this is a bug, please open an issue at: https://github.com/cloudflare/workers-sdk/issues/new/choose
+
+
+­ƒ¬Á  Logs were written to "C:\Users\56930\.wrangler\logs\wrangler-2026-03-17_15-48-24_612.log"
+
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 1.

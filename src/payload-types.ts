@@ -1114,7 +1114,15 @@ export interface SeoPage {
   /**
    * Schema markup personalizado
    */
-  schemaMarkup?: string | null;
+  schemaMarkup?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }

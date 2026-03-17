@@ -43,6 +43,8 @@ const cloudflare =
     ? await getCloudflareContextFromWrangler()
     : await getCloudflareContext({ async: true })
 
+console.error('[OPENNEXT] Payload Config Cloudflare Context:', !!cloudflare?.env, 'D1:', !!cloudflare?.env?.D1);
+
 // Inicializar servicios de IA si hay API keys configuradas
 // Nota: Los hooks usarán process.env directamente cuando se ejecuten
 const glmApiKey = process.env.GLM_API_KEY
@@ -59,6 +61,9 @@ if (telegramBotToken) {
 export default buildConfig({
   admin: {
     user: Users.slug,
+    avatar: {
+      Component: '/components/Avatar/index#CustomAvatar',
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

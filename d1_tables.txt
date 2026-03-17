@@ -1,0 +1,245 @@
+
+ Ôøà´©Å wrangler 4.74.0
+ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+Resource location: local 
+
+Use --remote if you want to access the remote instance.
+
+­ƒîÇ Executing on local database guardman-d1 (9bd733ce-2dae-4b51-b968-75f8f92e38d5) from .wrangler\state\v3\d1:
+­ƒîÇ To execute on your remote database, add a --remote flag to your wrangler command.
+­ƒÜú 1 command executed successfully.
+[
+  {
+    "results": [
+      {
+        "name": "_cf_METADATA"
+      },
+      {
+        "name": "users_sessions"
+      },
+      {
+        "name": "users"
+      },
+      {
+        "name": "payload_locked_documents"
+      },
+      {
+        "name": "payload_locked_documents_rels"
+      },
+      {
+        "name": "payload_preferences"
+      },
+      {
+        "name": "payload_preferences_rels"
+      },
+      {
+        "name": "payload_migrations"
+      },
+      {
+        "name": "users_sales_profile_preferred_zones"
+      },
+      {
+        "name": "users_sales_profile_specializations"
+      },
+      {
+        "name": "settings"
+      },
+      {
+        "name": "locations_main_keywords"
+      },
+      {
+        "name": "locations_service_areas"
+      },
+      {
+        "name": "locations"
+      },
+      {
+        "name": "neighborhoods_main_keywords"
+      },
+      {
+        "name": "neighborhoods"
+      },
+      {
+        "name": "services_features"
+      },
+      {
+        "name": "services_benefits"
+      },
+      {
+        "name": "services_keywords"
+      },
+      {
+        "name": "services_faq"
+      },
+      {
+        "name": "services"
+      },
+      {
+        "name": "services_rels"
+      },
+      {
+        "name": "problems_keywords"
+      },
+      {
+        "name": "problems_pain_points"
+      },
+      {
+        "name": "problems"
+      },
+      {
+        "name": "problems_rels"
+      },
+      {
+        "name": "industries_target_personas"
+      },
+      {
+        "name": "industries_features"
+      },
+      {
+        "name": "industries_statistics_main_risks"
+      },
+      {
+        "name": "industries_keywords"
+      },
+      {
+        "name": "industries"
+      },
+      {
+        "name": "industries_rels"
+      },
+      {
+        "name": "solutions_target_personas"
+      },
+      {
+        "name": "solutions_includes"
+      },
+      {
+        "name": "solutions_benefits"
+      },
+      {
+        "name": "solutions_keywords"
+      },
+      {
+        "name": "solutions_faq"
+      },
+      {
+        "name": "solutions"
+      },
+      {
+        "name": "solutions_rels"
+      },
+      {
+        "name": "personas_pain_points"
+      },
+      {
+        "name": "personas_needs"
+      },
+      {
+        "name": "personas_goals"
+      },
+      {
+        "name": "personas_keywords"
+      },
+      {
+        "name": "personas"
+      },
+      {
+        "name": "personas_rels"
+      },
+      {
+        "name": "leads_internal_classification_detected_problems"
+      },
+      {
+        "name": "leads_tags"
+      },
+      {
+        "name": "leads_notes"
+      },
+      {
+        "name": "leads_follow_ups"
+      },
+      {
+        "name": "leads"
+      },
+      {
+        "name": "lead_duplicates_lead_ids"
+      },
+      {
+        "name": "lead_duplicates"
+      },
+      {
+        "name": "scoring_rules_persona_weights"
+      },
+      {
+        "name": "scoring_rules_budget_weights"
+      },
+      {
+        "name": "scoring_rules_urgency_weights"
+      },
+      {
+        "name": "scoring_rules"
+      },
+      {
+        "name": "seo_pages_highlights"
+      },
+      {
+        "name": "seo_pages_faq"
+      },
+      {
+        "name": "seo_pages_glm_analysis_opportunities"
+      },
+      {
+        "name": "seo_pages_glm_analysis_recommended_keywords"
+      },
+      {
+        "name": "seo_pages"
+      },
+      {
+        "name": "seo_pages_rels"
+      },
+      {
+        "name": "keywords_related_keywords"
+      },
+      {
+        "name": "keywords_serper_metrics_top_competitors"
+      },
+      {
+        "name": "keywords"
+      },
+      {
+        "name": "testimonials"
+      },
+      {
+        "name": "testimonials_rels"
+      },
+      {
+        "name": "blog_tags"
+      },
+      {
+        "name": "blog"
+      },
+      {
+        "name": "blog_rels"
+      },
+      {
+        "name": "forms_lead_config_add_tags"
+      },
+      {
+        "name": "forms"
+      },
+      {
+        "name": "form_submissions"
+      },
+      {
+        "name": "payload_kv"
+      },
+      {
+        "name": "media"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "duration": 0
+    }
+  }
+]

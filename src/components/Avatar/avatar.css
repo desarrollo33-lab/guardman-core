@@ -1,0 +1,6 @@
+a.app-header__account,
+a.app-header__account:hover,
+a.app-header__account:focus,
+a.app-header__account:active {
+  text-decoration: none !important;
+}
