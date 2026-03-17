@@ -1,7 +1,7 @@
 /**
  * GUARDMAN - Keywords
  * Keywords clusterizadas y analizadas para SEO
- * 
+ *
  * Tipos de keywords:
  * - location: Comuna (las condes)
  * - service: Servicio (guardias seguridad)
@@ -10,6 +10,7 @@
  */
 
 import type { CollectionConfig } from 'payload'
+import { enrichKeywordAfterChange } from '../../hooks/keywords/enrichKeyword'
 
 export const keywords: CollectionConfig = {
   slug: 'keywords',
@@ -61,7 +62,8 @@ export const keywords: CollectionConfig = {
       relationTo: 'locations',
       label: 'Comuna',
       admin: {
-        condition: (data) => ['location', 'service-location', 'problem-location'].includes(data.type),
+        condition: (data) =>
+          ['location', 'service-location', 'problem-location'].includes(data.type),
       },
     },
     {
@@ -283,4 +285,7 @@ export const keywords: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [enrichKeywordAfterChange],
+  },
 }

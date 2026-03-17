@@ -1,0 +1,1 @@
+export { enrichKeywordAfterChange } from './enrichKeyword'

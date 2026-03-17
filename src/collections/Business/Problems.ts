@@ -1,7 +1,7 @@
 /**
  * GUARDMAN - Problemas SEO
  * Problemas de seguridad que buscan los clientes
- * 
+ *
  * Usado para:
  * - Keyword research
  * - Generación de páginas SEO
@@ -9,6 +9,7 @@
  */
 
 import type { CollectionConfig } from 'payload'
+import { enrichProblemAfterChange } from '../../hooks/problems/enrichProblem'
 
 export const problems: CollectionConfig = {
   slug: 'problems',
@@ -22,6 +23,9 @@ export const problems: CollectionConfig = {
     create: ({ req: { user } }) => !!user,
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => user?.role === 'admin',
+  },
+  hooks: {
+    afterChange: [enrichProblemAfterChange],
   },
   fields: [
     {
@@ -97,9 +101,7 @@ export const problems: CollectionConfig = {
       admin: {
         description: 'Por qué el cliente busca este servicio',
       },
-      fields: [
-        { name: 'painPoint', type: 'text', label: 'Punto de dolor' },
-      ],
+      fields: [{ name: 'painPoint', type: 'text', label: 'Punto de dolor' }],
     },
     {
       name: 'serperData',

@@ -1,7 +1,7 @@
 /**
  * GUARDMAN - Localidades (Comunas)
  * Comunas de la Región Metropolitana de Santiago
- * 
+ *
  * Usado para:
  * - SEO geolocalizado (/seguridad-las-condes/)
  * - Filtrar contenido por zona
@@ -9,6 +9,8 @@
  */
 
 import type { CollectionConfig } from 'payload'
+
+import { enrichLocationAfterChange } from '../../hooks/locations/enrichLocation'
 
 export const locations: CollectionConfig = {
   slug: 'locations',
@@ -44,9 +46,7 @@ export const locations: CollectionConfig = {
     {
       name: 'region',
       type: 'select',
-      options: [
-        { label: 'Región Metropolitana', value: 'rm' },
-      ],
+      options: [{ label: 'Región Metropolitana', value: 'rm' }],
       defaultValue: 'rm',
       label: 'Región',
     },
@@ -114,17 +114,13 @@ export const locations: CollectionConfig = {
       admin: {
         description: 'Keywords principales para SEO de esta comuna',
       },
-      fields: [
-        { name: 'keyword', type: 'text', label: 'Keyword' },
-      ],
+      fields: [{ name: 'keyword', type: 'text', label: 'Keyword' }],
     },
     {
       name: 'serviceAreas',
       type: 'array',
       label: 'Áreas de servicio',
-      fields: [
-        { name: 'area', type: 'text', label: 'Área' },
-      ],
+      fields: [{ name: 'area', type: 'text', label: 'Área' }],
     },
     {
       name: 'priorityScore',
@@ -167,4 +163,8 @@ export const locations: CollectionConfig = {
       ],
     },
   ],
+
+  hooks: {
+    afterChange: [enrichLocationAfterChange],
+  },
 }

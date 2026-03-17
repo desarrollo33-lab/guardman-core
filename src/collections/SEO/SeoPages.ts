@@ -1,7 +1,7 @@
 /**
  * GUARDMAN - Páginas SEO
  * Páginas SEO geolocalizadas generadas automáticamente
- * 
+ *
  * Tipos de página:
  * - location: Página de comuna (/seguridad-las-condes/)
  * - service: Página de servicio (/guardias-de-seguridad/)
@@ -10,6 +10,8 @@
  */
 
 import type { CollectionConfig } from 'payload'
+
+import { generateSEOCache } from '../../hooks/seoPages/generateSEOCache'
 
 export const seoPages: CollectionConfig = {
   slug: 'seo-pages',
@@ -75,7 +77,14 @@ export const seoPages: CollectionConfig = {
       relationTo: 'locations',
       label: 'Comuna',
       admin: {
-        condition: (data) => ['location', 'service-location', 'industry-location', 'persona-location', 'problem-location'].includes(data.pageType),
+        condition: (data) =>
+          [
+            'location',
+            'service-location',
+            'industry-location',
+            'persona-location',
+            'problem-location',
+          ].includes(data.pageType),
       },
     },
     {
@@ -388,6 +397,6 @@ export const seoPages: CollectionConfig = {
 
   // Hooks para generación automática
   hooks: {
-    // afterChange: [generateSEOCache],
+    afterChange: [generateSEOCache],
   },
 }

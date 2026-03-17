@@ -1,13 +1,15 @@
 /**
  * GUARDMAN - Barrios/Urbanizaciones
  * Barrios dentro de las comunas
- * 
+ *
  * Usado para:
  * - Contenido más específico (/seguridad-las-condes-las-bodegas/)
  * - Testimonios por barrio
  */
 
 import type { CollectionConfig } from 'payload'
+
+import { enrichNeighborhoodAfterChange } from '../../hooks/neighborhoods/enrichNeighborhood'
 
 export const neighborhoods: CollectionConfig = {
   slug: 'neighborhoods',
@@ -72,9 +74,7 @@ export const neighborhoods: CollectionConfig = {
       name: 'mainKeywords',
       type: 'array',
       label: 'Palabras Clave',
-      fields: [
-        { name: 'keyword', type: 'text', label: 'Keyword' },
-      ],
+      fields: [{ name: 'keyword', type: 'text', label: 'Keyword' }],
     },
     {
       name: 'priorityScore',
@@ -91,4 +91,8 @@ export const neighborhoods: CollectionConfig = {
       label: 'Barrio activo',
     },
   ],
+
+  hooks: {
+    afterChange: [enrichNeighborhoodAfterChange],
+  },
 }
