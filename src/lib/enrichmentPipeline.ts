@@ -1,5 +1,9 @@
 import { Payload } from 'payload'
 import { fetchSerperData } from './serper'
+import { GLMService } from '../services/GLMService'
+
+const SERPER_API_KEY = process.env.SERPER_API_KEY
+const GLM_API_KEY = process.env.GLM_API_KEY
 
 export async function runEnrichmentPipeline(
   payload: Payload,
@@ -58,10 +62,60 @@ export async function runEnrichmentPipeline(
     )
   }
 
-  // Step 2: Update location with enrichment data
+  // Step 2: Generate SEO content with GLM
+  let glmContent: any = null
+  if (GLM_API_KEY && locationDoc.name) {
+    try {
+      const glmService = new GLMService(GLM_API_KEY, 'glm-5')
+      glmContent = await glmService.generateSEOContent({
+        location: locationDoc.name,
+        service: 'Guardias de Seguridad',
+        problem: 'Seguridad para empresas y condominios',
+      })
+
+      payload.logger.info(
+        `[Pipeline] GLM generated: ${glmContent?.metaTitle?.slice(0, 50) || 'N/A'}...`,
+      )
+
+      // Cache the GLM result
+      try {
+        await payload.create({
+          collection: 'api-cache',
+          data: {
+            source: 'glm',
+            query: `seo-content-${locationDoc.name}`,
+            response: glmContent,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          } as any,
+          overrideAccess: true,
+        })
+      } catch (cacheErr) {
+        payload.logger.warn(`[Pipeline] Failed to cache GLM result: ${cacheErr}`)
+      }
+    } catch (glmErr) {
+      payload.logger.warn(
+        `[Pipeline] GLM unavailable (${glmErr instanceof Error ? glmErr.message : glmErr}), skipping`,
+      )
+    }
+  } else if (!GLM_API_KEY) {
+    payload.logger.warn('[Pipeline] GLM_API_KEY not configured, skipping AI content generation')
+  }
+
+  // Step 3: Update location with enrichment data
   const updateData: Record<string, any> = {}
   if (characteristics) {
     updateData.characteristics = characteristics
+  }
+
+  // Add GLM-generated SEO content
+  if (glmContent) {
+    if (glmContent.metaTitle) {
+      updateData.seo = {
+        ...updateData.seo,
+        metaTitle: glmContent.metaTitle,
+        metaDescription: glmContent.metaDescription,
+      }
+    }
   }
 
   if (Object.keys(updateData).length > 0) {
@@ -73,7 +127,7 @@ export async function runEnrichmentPipeline(
     })
   }
 
-  // Step 3: Create SEO page (Hub)
+  // Step 4: Create SEO page (Hub)
   const slug = (locationDoc.name as string)
     .toLowerCase()
     .normalize('NFD')
@@ -93,7 +147,7 @@ export async function runEnrichmentPipeline(
       await payload.create({
         collection: 'seo-pages',
         data: {
-          title: `Seguridad en ${locationDoc.name}`,
+          title: glmContent?.h1 || `Seguridad en ${locationDoc.name}`,
           slug: `seguridad-${slug}`,
           pageType: 'location',
           location: Number(docId),
@@ -107,7 +161,7 @@ export async function runEnrichmentPipeline(
     payload.logger.warn(`[Pipeline] SEO page creation failed: ${seoErr}`)
   }
 
-  // Step 4: Save enrichment history
+  // Step 5: Save enrichment history
   try {
     await payload.create({
       collection: 'enrichment-history',
@@ -115,6 +169,7 @@ export async function runEnrichmentPipeline(
         sourceCollection: 'locations',
         sourceId: String(docId),
         serperRawData: serperData as any,
+        glmResponse: glmContent as any,
         wasSuccessful: true,
       },
       overrideAccess: true,
@@ -124,5 +179,9 @@ export async function runEnrichmentPipeline(
   }
 
   payload.logger.info(`[Pipeline] Completed for: ${locationDoc.name}`)
-  return { success: true, serperResults: serperData?.organic?.length || 0 }
+  return {
+    success: true,
+    serperResults: serperData?.organic?.length || 0,
+    glmGenerated: !!glmContent,
+  }
 }

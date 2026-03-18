@@ -170,24 +170,16 @@ export const leads: CollectionConfig = {
       fields: [
         {
           name: 'detectedPersona',
-          type: 'select',
+          type: 'relationship',
+          relationTo: 'personas',
           label: 'Persona Detectada',
-          options: [
-            { label: 'Presidente Comunidad', value: 'presidente_comunidad' },
-            { label: 'Administrador Condominio', value: 'admin_condominio' },
-            { label: 'Gerente General', value: 'gerente_general' },
-            { label: 'Dueño de Casa', value: 'dueno_casa' },
-            { label: 'Encargado Seguridad', value: 'encargado_seguridad' },
-            { label: 'Otro', value: 'otro' },
-          ],
         },
         {
           name: 'detectedProblems',
-          type: 'array',
+          type: 'relationship',
+          relationTo: 'problems',
+          hasMany: true,
           label: 'Problemas Detectados',
-          fields: [
-            { name: 'problem', type: 'text', label: 'Problema' },
-          ],
         },
         {
           name: 'estimatedBudget',

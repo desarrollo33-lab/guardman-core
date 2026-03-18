@@ -5,7 +5,8 @@ export const BrandDNA: GlobalConfig = {
   label: 'Brand DNA',
   admin: {
     group: 'Sistema',
-    description: 'ADN de la marca, Asset Visuales (Logo/Favicon), Reglas para IA y Configuración de Negocio Local.',
+    description:
+      'ADN de la marca, Asset Visuales (Logo/Favicon), Reglas para IA y Configuración de Negocio Local.',
   },
   access: {
     read: () => true,
@@ -18,6 +19,12 @@ export const BrandDNA: GlobalConfig = {
         {
           label: 'Core Identity',
           fields: [
+            {
+              name: 'siteDescription',
+              type: 'textarea',
+              label: 'Descripción del Sitio',
+              admin: { description: 'Meta description para SEO global' },
+            },
             {
               type: 'row',
               fields: [
@@ -123,6 +130,121 @@ export const BrandDNA: GlobalConfig = {
                     { name: 'closeTime', type: 'text', admin: { description: 'ej: 18:00' } },
                     { name: 'closed', type: 'checkbox' },
                   ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Social Media',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'facebook',
+                  type: 'text',
+                  admin: { width: '50%', placeholder: 'https://facebook.com/...' },
+                },
+                {
+                  name: 'instagram',
+                  type: 'text',
+                  admin: { width: '50%', placeholder: 'https://instagram.com/...' },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'linkedin',
+                  type: 'text',
+                  admin: { width: '50%', placeholder: 'https://linkedin.com/company/...' },
+                },
+                {
+                  name: 'youtube',
+                  type: 'text',
+                  admin: { width: '50%', placeholder: 'https://youtube.com/...' },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'API Config',
+          fields: [
+            {
+              name: 'glmConfig',
+              type: 'group',
+              label: 'Configuración GLM',
+              fields: [
+                {
+                  name: 'model',
+                  type: 'select',
+                  label: 'Modelo',
+                  options: [
+                    { label: 'GLM-5', value: 'glm-5' },
+                    { label: 'GLM-4', value: 'glm-4' },
+                  ],
+                  defaultValue: 'glm-5',
+                },
+                {
+                  name: 'temperature',
+                  type: 'number',
+                  label: 'Temperature',
+                  defaultValue: 0.7,
+                  min: 0,
+                  max: 1,
+                },
+                {
+                  name: 'maxTokens',
+                  type: 'number',
+                  label: 'Max Tokens',
+                  defaultValue: 2048,
+                },
+              ],
+            },
+            {
+              name: 'limits',
+              type: 'group',
+              label: 'Límites',
+              fields: [
+                {
+                  name: 'monthlySerperQuota',
+                  type: 'number',
+                  label: 'Cuota mensual Serper',
+                  defaultValue: 2000,
+                },
+                {
+                  name: 'monthlyGLMQuota',
+                  type: 'number',
+                  label: 'Cuota mensual GLM',
+                  defaultValue: 500,
+                },
+              ],
+            },
+            {
+              name: 'leadsConfig',
+              type: 'group',
+              label: 'Configuración de Leads',
+              fields: [
+                {
+                  name: 'autoAssign',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Asignación automática',
+                },
+                {
+                  name: 'notifyTelegram',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Notificar por Telegram',
+                },
+                {
+                  name: 'scoringEnabled',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  label: 'Scoring automático con IA',
                 },
               ],
             },
