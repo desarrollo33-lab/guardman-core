@@ -113,12 +113,7 @@ export const leads: CollectionConfig = {
           relationTo: 'locations',
           label: 'Comuna',
         },
-        {
-          name: 'neighborhood',
-          type: 'relationship',
-          relationTo: 'neighborhoods',
-          label: 'Barrio',
-        },
+
         {
           name: 'service',
           type: 'relationship',

@@ -15,7 +15,7 @@ export const problems: CollectionConfig = {
   slug: 'problems',
   admin: {
     useAsTitle: 'name',
-    group: 'Negocio',
+    group: 'Empresa',
     description: 'Problemas de seguridad que buscan los clientes (keywords SEO)',
   },
   access: {
@@ -24,9 +24,9 @@ export const problems: CollectionConfig = {
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
-  // hooks: {
-  //   afterChange: [enrichProblemAfterChange],
-  // },
+  hooks: {
+    afterChange: [enrichProblemAfterChange],
+  },
   fields: [
     {
       name: 'name',

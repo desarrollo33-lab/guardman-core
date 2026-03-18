@@ -1,13 +1,3 @@
-/**
- * GUARDMAN - Localidades (Comunas)
- * Comunas de la Región Metropolitana de Santiago
- *
- * Usado para:
- * - SEO geolocalizado (/seguridad-las-condes/)
- * - Filtrar contenido por zona
- * - Asignar leads a vendedores por zona
- */
-
 import type { CollectionConfig } from 'payload'
 import { triggerAsyncEnrichment } from '../../hooks/locations/triggerAsyncEnrichment'
 
@@ -15,7 +5,7 @@ export const locations: CollectionConfig = {
   slug: 'locations',
   admin: {
     useAsTitle: 'name',
-    group: 'Geografía',
+    group: 'Marketing',
     description: 'Comunas de la Región Metropolitana',
     listSearchableFields: ['name', 'slug', 'geoZone'],
   },
@@ -31,29 +21,38 @@ export const locations: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Nombre de la Comuna',
+      admin: {
+        description: 'Ingresa el nombre y guarda para generar contenido automáticamente',
+      },
     },
     {
       name: 'slug',
       type: 'text',
-      required: true,
       unique: true,
       label: 'URL Slug',
       admin: {
-        description: 'Ej: las-condes, providencia, santiago-centro',
+        description: 'Se genera automáticamente desde el nombre',
+        condition: (data) => data.enrichmentStatus === 'completed',
       },
     },
     {
       name: 'region',
       type: 'select',
-      options: [{ label: 'Región Metropolitana', value: 'rm' }],
+      options: [
+        { label: 'Región Metropolitana', value: 'rm' },
+        { label: 'Región de Valparaíso', value: 'valparaiso' },
+      ],
       defaultValue: 'rm',
       label: 'Región',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
       name: 'geoZone',
       type: 'select',
-      required: true,
       label: 'Zona Geográfica',
+      defaultValue: 'oriente',
       options: [
         { label: 'Zona Oriente', value: 'oriente' },
         { label: 'Zona Nororiente', value: 'nororiente' },
@@ -62,7 +61,11 @@ export const locations: CollectionConfig = {
         { label: 'Zona Suroriente', value: 'suroriente' },
         { label: 'Zona Sur', value: 'sur' },
         { label: 'Zona Centro', value: 'centro' },
+        { label: 'Valle de Aconcagua', value: 'aconcagua' },
       ],
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
       name: 'tier',
@@ -75,6 +78,9 @@ export const locations: CollectionConfig = {
         { label: 'Emergente (C3-D)', value: 'emerging' },
       ],
       defaultValue: 'medium',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
       name: 'economicDriver',
@@ -88,44 +94,59 @@ export const locations: CollectionConfig = {
         { label: 'Mixto Masivo', value: 'mixto_masivo' },
       ],
       admin: {
-        description: 'Define el foco transaccional B2B (Ej. Huechuraba = Industrial).',
-      }
+        description: 'Se genera automáticamente con IA',
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
       name: 'decisionBuyerLocation',
       type: 'relationship',
       relationTo: 'locations',
-      label: 'Ubicación del Buyer Persona (Cross-Location Intent)',
+      label: 'Ubicación del Buyer Persona',
       admin: {
-        description: 'Ej: Para Seguridad Industrial en San Bernardo, el Dueño/Buyer vive y busca desde Vitacura.',
-      }
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
-      name: 'autoEnrich',
-      type: 'checkbox',
-      label: 'Auto-Enrich con IA',
-      defaultValue: false,
+      name: 'enrichmentStatus',
+      type: 'select',
+      label: 'Estado de Generación IA',
+      options: [
+        { label: 'Pendiente', value: 'pending' },
+        { label: 'Generando...', value: 'in_progress' },
+        { label: 'Completado', value: 'completed' },
+        { label: 'Error', value: 'failed' },
+      ],
+      defaultValue: 'pending',
       admin: {
-        description: 'Al marcar y guardar, se dispara el pipeline asíncrono de Serper y GLM.',
-      }
+        position: 'sidebar',
+        description: 'Estado del pipeline de generación de contenido',
+      },
     },
     {
       name: 'characteristics',
       type: 'textarea',
       label: 'Características',
       admin: {
-        description: 'Descripción de la comuna para contenido SEO',
+        description: 'Se genera automáticamente con IA',
+        condition: (data) => data.enrichmentStatus === 'completed',
       },
     },
     {
       name: 'population',
       type: 'number',
       label: 'Población',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
       name: 'coordinates',
       type: 'group',
       label: 'Coordenadas',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
       fields: [
         {
           name: 'lat',
@@ -144,7 +165,8 @@ export const locations: CollectionConfig = {
       type: 'array',
       label: 'Palabras Clave Principales',
       admin: {
-        description: 'Keywords principales para SEO de esta comuna',
+        description: 'Se genera automáticamente con IA',
+        condition: (data) => data.enrichmentStatus === 'completed',
       },
       fields: [{ name: 'keyword', type: 'text', label: 'Keyword' }],
     },
@@ -152,6 +174,9 @@ export const locations: CollectionConfig = {
       name: 'serviceAreas',
       type: 'array',
       label: 'Áreas de servicio',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
       fields: [{ name: 'area', type: 'text', label: 'Área' }],
     },
     {
@@ -163,6 +188,7 @@ export const locations: CollectionConfig = {
       label: 'Prioridad SEO (0-100)',
       admin: {
         description: 'Mayor número = más importante para SEO',
+        condition: (data) => data.enrichmentStatus === 'completed',
       },
     },
     {
@@ -170,18 +196,24 @@ export const locations: CollectionConfig = {
       type: 'checkbox',
       defaultValue: true,
       label: 'Comuna activa',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
     },
     {
       name: 'seo',
       type: 'group',
       label: 'SEO',
+      admin: {
+        condition: (data) => data.enrichmentStatus === 'completed',
+      },
       fields: [
         {
           name: 'metaTitle',
           type: 'text',
           label: 'Meta Title',
           admin: {
-            description: 'Título para SEO (si está vacío usa el nombre)',
+            description: 'Se genera automáticamente con IA',
           },
         },
         {
@@ -189,26 +221,30 @@ export const locations: CollectionConfig = {
           type: 'textarea',
           label: 'Meta Description',
           admin: {
-            description: 'Descripción para SEO',
+            description: 'Se genera automáticamente con IA',
           },
         },
       ],
     },
-    {
-      name: 'enrichButton',
-      type: 'ui',
-      admin: {
-        components: {
-          Field: {
-            path: '/components/EnrichButton',
-            exportName: 'EnrichButton',
-          },
-        },
-      },
-    },
   ],
 
   hooks: {
+    beforeValidate: [
+      async ({ data, operation }) => {
+        if (operation === 'create' && data?.name) {
+          if (!data.slug) {
+            data.slug = data.name
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-|-$/g, '')
+          }
+          data.enrichmentStatus = 'pending'
+        }
+        return data
+      },
+    ],
     afterChange: [triggerAsyncEnrichment],
   },
 }

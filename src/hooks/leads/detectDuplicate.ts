@@ -1,6 +1,7 @@
 /**
- * GUARDMAN - Hook de Detección de Duplicados
+ * GUARDMAN V3 - Hook de Detección de Duplicados
  * Se ejecuta ANTES de crear un lead para detectar duplicados
+ * V3: Simplified - no longer writes to lead-duplicates collection
  */
 
 import type { CollectionBeforeChangeHook } from 'payload'
@@ -33,46 +34,6 @@ export const detectDuplicateBeforeCreate: CollectionBeforeChangeHook = async ({
       const existingLead = existing.docs[0]
       console.log(`[Duplicate Detection] Found duplicate: ${existingLead.id}`)
 
-      // Buscar o crear registro de duplicado
-      const duplicateRecord = await req.payload.find({
-        collection: 'lead-duplicates',
-        where: { normalizedPhone: { equals: normalizedPhone } },
-        limit: 1,
-      })
-
-      if (duplicateRecord.totalDocs > 0) {
-        // Actualizar registro existente
-        const currentLeadIds = duplicateRecord.docs[0].leadIds as any[]
-        await req.payload.update({
-          collection: 'lead-duplicates',
-          id: duplicateRecord.docs[0].id,
-          data: {
-            occurrenceCount: duplicateRecord.docs[0].occurrenceCount + 1,
-            lastSeen: new Date().toISOString(),
-            leadIds: [
-              ...currentLeadIds,
-              { leadId: String(existingLead.id), createdAt: new Date().toISOString() },
-            ],
-          },
-          req,
-        })
-      } else {
-        // Crear nuevo registro de duplicado
-        await req.payload.create({
-          collection: 'lead-duplicates',
-          data: {
-            normalizedPhone,
-            leadIds: [
-              { leadId: String(existingLead.id), createdAt: String(existingLead.createdAt) },
-            ],
-            occurrenceCount: 1,
-            firstSeen: existingLead.createdAt,
-            lastSeen: new Date().toISOString(),
-          },
-          req,
-        })
-      }
-
       // Agregar etiqueta y nota al nuevo lead
       const updatedData = {
         ...data,
@@ -104,3 +65,4 @@ export const detectDuplicateBeforeCreate: CollectionBeforeChangeHook = async ({
 }
 
 export default detectDuplicateBeforeCreate
+

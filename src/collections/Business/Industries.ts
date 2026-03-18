@@ -14,7 +14,7 @@ export const industries: CollectionConfig = {
   slug: 'industries',
   admin: {
     useAsTitle: 'name',
-    group: 'Negocio',
+    group: 'Empresa',
     description: 'Industrias que atendemos',
   },
   access: {

@@ -14,7 +14,7 @@ export const solutions: CollectionConfig = {
   slug: 'solutions',
   admin: {
     useAsTitle: 'title',
-    group: 'Negocio',
+    group: 'Empresa',
     description: 'Soluciones específicas para cada necesidad',
   },
   access: {
@@ -66,11 +66,10 @@ export const solutions: CollectionConfig = {
     },
     {
       name: 'targetPersonas',
-      type: 'array',
+      type: 'relationship',
+      relationTo: 'personas',
+      hasMany: true,
       label: 'Personas objetivo',
-      fields: [
-        { name: 'persona', type: 'text', label: 'Persona' },
-      ],
     },
     {
       name: 'relatedServices',

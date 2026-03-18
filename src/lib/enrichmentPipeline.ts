@@ -1,52 +1,5 @@
 import { Payload } from 'payload'
 import { fetchSerperData } from './serper'
-import { generateContentGLM } from './glm'
-
-interface GLMPrompt {
-  id: number | string
-  identifier: string
-  systemPrompt?: string
-  userPromptTemplate?: string
-}
-
-async function getPrompt(payload: Payload, identifier: string): Promise<GLMPrompt | null> {
-  const result = await payload.find({
-    collection: 'prompts',
-    where: { identifier: { equals: identifier } },
-    limit: 1,
-  })
-  return result.docs[0] || null
-}
-
-function replacePromptVars(template: string, vars: Record<string, string>): string {
-  let result = template
-  for (const [key, value] of Object.entries(vars)) {
-    result = result.replace(new RegExp(`{{${key}}}`, 'g'), value)
-  }
-  return result
-}
-
-async function callGLM(
-  payload: Payload,
-  prompt: GLMPrompt,
-  vars: Record<string, string>,
-): Promise<any> {
-  const systemPromptTxt = prompt.systemPrompt || 'Eres un experto en SEO B2B.'
-  const userPromptTxt = replacePromptVars(prompt.userPromptTemplate || '', vars)
-
-  const glmPayload = {
-    contents: [{ role: 'user' as const, parts: [{ text: userPromptTxt }] }],
-    systemInstruction: { role: 'user' as const, parts: [{ text: systemPromptTxt }] },
-    generationConfig: { temperature: 0.3, responseMimeType: 'application/json' as const },
-  }
-
-  const result = await generateContentGLM(payload, glmPayload)
-  try {
-    return JSON.parse(result)
-  } catch {
-    throw new Error(`GLM returned invalid JSON for prompt ${prompt.identifier}`)
-  }
-}
 
 export async function runEnrichmentPipeline(
   payload: Payload,
@@ -57,220 +10,119 @@ export async function runEnrichmentPipeline(
     throw new Error(`Pipeline not implemented for collection: ${collectionSlug}`)
   }
 
+  payload.logger.info(`[Pipeline] Starting for location ID: ${docId}`)
+
   const locationDoc = await payload.findByID({
     collection: 'locations',
     id: docId,
     depth: 0,
   })
 
-  payload.logger.info(`[Pipeline] Starting 3-step pipeline for: ${locationDoc.name}`)
+  payload.logger.info(`[Pipeline] Found: ${locationDoc.name}`)
 
-  const historyRecords: any[] = []
+  let characteristics = ''
+  let serperData: any = null
 
-  // Step 1: SERPER FETCH
-  const serperQuery = `seguridad privada empresas o condominios en ${locationDoc.name} Chile`
-  payload.logger.info(`[Pipeline:Step1] Fetching Serper data...`)
-  const serperData = await fetchSerperData(payload, { q: serperQuery })
+  // Step 1: Fetch Serper data (graceful if API key missing)
+  try {
+    const serperQuery = `seguridad privada empresas o condominios en ${locationDoc.name} Chile`
+    serperData = await fetchSerperData(payload, { q: serperQuery })
 
-  // Step 2: ANALYZE LOCATION (Strategic Analysis)
-  payload.logger.info(`[Pipeline:Step2] Running analyze_location...`)
-  const analyzePrompt = await getPrompt(payload, 'analyze_location')
+    payload.logger.info(`[Pipeline] Serper results: ${serperData?.organic?.length || 0}`)
 
-  let locationAnalysis: any = null
-  if (analyzePrompt) {
+    // Extract characteristics from search snippets
+    characteristics =
+      serperData.organic
+        ?.slice(0, 3)
+        .map((r: any) => r.snippet)
+        .join(' || ') || ''
+
+    // Cache the raw Serper result
     try {
-      locationAnalysis = await callGLM(payload, analyzePrompt, {
-        location: locationDoc.name as string,
-        serperData: JSON.stringify(serperData?.organic?.slice(0, 5) || []),
+      await payload.create({
+        collection: 'api-cache',
+        data: {
+          source: 'serper',
+          query: serperQuery,
+          response: serperData,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        } as any,
+        overrideAccess: true,
       })
-
-      historyRecords.push({
-        promptIdentifier: 'analyze_location',
-        response: locationAnalysis,
-      })
-
-      // Auto-update location with economicDriver if returned
-      if (locationAnalysis?.economicDriver) {
-        await payload.update({
-          collection: 'locations',
-          id: docId,
-          data: { economicDriver: locationAnalysis.economicDriver },
-          overrideAccess: true,
-        })
-        payload.logger.info(
-          `[Pipeline] Updated economicDriver to: ${locationAnalysis.economicDriver}`,
-        )
-      }
-    } catch (err) {
-      payload.logger.error(`[Pipeline:Step2] Failed: ${err}`)
+    } catch (cacheErr) {
+      payload.logger.warn(`[Pipeline] Failed to cache Serper result: ${cacheErr}`)
     }
+  } catch (serperErr) {
+    payload.logger.warn(
+      `[Pipeline] Serper unavailable (${serperErr instanceof Error ? serperErr.message : serperErr}), skipping`,
+    )
   }
 
-  // Step 3: OUTLINE CLUSTER (Structure Generation)
-  payload.logger.info(`[Pipeline:Step3] Running outline_cluster...`)
-  const outlinePrompt = await getPrompt(payload, 'outline_cluster')
-
-  let clusterStructure: any = null
-  if (outlinePrompt) {
-    try {
-      clusterStructure = await callGLM(payload, outlinePrompt, {
-        location: locationDoc.name as string,
-        economicDriver:
-          locationAnalysis?.economicDriver || (locationDoc.economicDriver as string) || 'General',
-        serperData: JSON.stringify(serperData?.organic?.slice(0, 3) || []),
-      })
-
-      historyRecords.push({
-        promptIdentifier: 'outline_cluster',
-        response: clusterStructure,
-      })
-    } catch (err) {
-      payload.logger.error(`[Pipeline:Step3] Failed: ${err}`)
-    }
+  // Step 2: Update location with enrichment data
+  const updateData: Record<string, any> = {}
+  if (characteristics) {
+    updateData.characteristics = characteristics
   }
 
-  // Step 4: BUILD SEOPAGES (Drafts)
-  if (clusterStructure?.pages && Array.isArray(clusterStructure.pages)) {
-    let hubId: string | number | null = null
+  if (Object.keys(updateData).length > 0) {
+    await payload.update({
+      collection: 'locations',
+      id: docId,
+      data: updateData,
+      overrideAccess: true,
+    })
+  }
 
-    // Create HUB
-    const hubPage = clusterStructure.pages.find((p: any) => p.pageType === 'hub')
-    if (hubPage) {
-      const createdHub = await payload.create({
+  // Step 3: Create SEO page (Hub)
+  const slug = (locationDoc.name as string)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
+  try {
+    // Check if page already exists
+    const existing = await payload.find({
+      collection: 'seo-pages',
+      where: { slug: { equals: `seguridad-${slug}` } },
+      limit: 1,
+    })
+
+    if (existing.totalDocs === 0) {
+      await payload.create({
         collection: 'seo-pages',
         data: {
-          title: hubPage.title,
-          slug: hubPage.slug,
+          title: `Seguridad en ${locationDoc.name}`,
+          slug: `seguridad-${slug}`,
           pageType: 'location',
-          clusterRole: 'hub',
-          location: docId as any,
+          location: Number(docId),
           status: 'draft',
-          glmGenerationStatus: 'review_needed',
-        },
+          priorityScore: 50,
+        } as any,
         overrideAccess: true,
       })
-      hubId = createdHub.id
-      payload.logger.info(`[Pipeline:Step4] Created Hub: ${hubPage.title}`)
-
-      // Step 5: GENERATE CONTENT for Hub (Hero + FAQ)
-      await generatePageContent(payload, createdHub.id, locationDoc, serperData, locationAnalysis)
     }
-
-    // Create Spokes
-    const spokes = clusterStructure.pages.filter((p: any) => p.pageType === 'spoke')
-    for (const spoke of spokes) {
-      const createdSpoke = await payload.create({
-        collection: 'seo-pages',
-        data: {
-          title: spoke.title,
-          slug: spoke.slug,
-          pageType: 'problem-location',
-          clusterRole: 'spoke',
-          location: docId as any,
-          parentHub: hubId as any,
-          status: 'draft',
-          glmGenerationStatus: 'review_needed',
-        },
-        overrideAccess: true,
-      })
-      payload.logger.info(`[Pipeline:Step4] Created Spoke: ${spoke.title}`)
-
-      // Step 5: GENERATE CONTENT for each Spoke
-      await generatePageContent(payload, createdSpoke.id, locationDoc, serperData, locationAnalysis)
-    }
+  } catch (seoErr) {
+    payload.logger.warn(`[Pipeline] SEO page creation failed: ${seoErr}`)
   }
 
-  // Save EnrichmentHistory
-  await payload.create({
-    collection: 'enrichment-history',
-    data: {
-      sourceCollection: collectionSlug,
-      sourceId: String(docId),
-      serperRawData: serperData as any,
-      glmResponse: { steps: historyRecords, finalStructure: clusterStructure },
-      tokensUsed: 0,
-      wasSuccessful: true,
-    },
-    overrideAccess: true,
-  })
+  // Step 4: Save enrichment history
+  try {
+    await payload.create({
+      collection: 'enrichment-history',
+      data: {
+        sourceCollection: 'locations',
+        sourceId: String(docId),
+        serperRawData: serperData as any,
+        wasSuccessful: true,
+      },
+      overrideAccess: true,
+    })
+  } catch (e) {
+    payload.logger.error(`[Pipeline] Failed to save history: ${e}`)
+  }
 
   payload.logger.info(`[Pipeline] Completed for: ${locationDoc.name}`)
-  return clusterStructure
-}
-
-async function generatePageContent(
-  payload: Payload,
-  pageId: string | number,
-  locationDoc: any,
-  serperData: any,
-  locationAnalysis: any,
-) {
-  const securityProblems = locationAnalysis?.securityProblems || []
-
-  // Generate Hero Section
-  const heroPrompt = await getPrompt(payload, 'write_hero_section')
-  if (heroPrompt) {
-    try {
-      const heroContent = await callGLM(payload, heroPrompt, {
-        location: locationDoc.name as string,
-        persona: 'Dueño de empresa o Administrador de Propiedad',
-        problem: securityProblems[0] || 'Seguridad',
-        economicDriver:
-          locationAnalysis?.economicDriver || (locationDoc.economicDriver as string) || 'General',
-      })
-
-      await payload.update({
-        collection: 'seo-pages',
-        id: pageId,
-        data: {
-          hero: {
-            headline: heroContent.headline || '',
-            subheadline: heroContent.subheadline || '',
-            ctaText: heroContent.ctaText || 'Contáctenos',
-          },
-        },
-        overrideAccess: true,
-      })
-      payload.logger.info(`[Pipeline:Step5] Generated Hero for page ${pageId}`)
-    } catch (err) {
-      payload.logger.error(`[Pipeline:Step5] Hero generation failed: ${err}`)
-    }
-  }
-
-  // Generate FAQs
-  const faqPrompt = await getPrompt(payload, 'write_faq')
-  if (faqPrompt) {
-    try {
-      const faqContent = await callGLM(payload, faqPrompt, {
-        location: locationDoc.name as string,
-        problems: securityProblems.join(', '),
-        peopleAlsoAsk: JSON.stringify(serperData?.peopleAlsoAsk?.slice(0, 5) || []),
-      })
-
-      const faqArray = Array.isArray(faqContent) ? faqContent : []
-
-      await payload.update({
-        collection: 'seo-pages',
-        id: pageId,
-        data: {
-          faq: faqArray.map((f: any) => ({
-            question: f.question,
-            answer: f.answer,
-          })),
-        },
-        overrideAccess: true,
-      })
-      payload.logger.info(`[Pipeline:Step5] Generated ${faqArray.length} FAQs for page ${pageId}`)
-    } catch (err) {
-      payload.logger.error(`[Pipeline:Step5] FAQ generation failed: ${err}`)
-    }
-  }
-
-  // Mark as ready for review
-  await payload.update({
-    collection: 'seo-pages',
-    id: pageId,
-    data: { glmGenerationStatus: 'review_needed' },
-    overrideAccess: true,
-  })
+  return { success: true, serperResults: serperData?.organic?.length || 0 }
 }

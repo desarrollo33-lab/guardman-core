@@ -17,7 +17,7 @@ export const seoPages: CollectionConfig = {
   slug: 'seo-pages',
   admin: {
     useAsTitle: 'title',
-    group: 'SEO',
+    group: 'Marketing',
     description: 'Páginas SEO geolocalizadas',
     listSearchableFields: ['title', 'slug', 'pageType', 'status'],
   },

@@ -9,7 +9,7 @@ export const testimonials: CollectionConfig = {
   slug: 'testimonials',
   admin: {
     useAsTitle: 'clientName',
-    group: 'SEO',
+    group: 'Marketing',
     description: 'Testimonios de clientes',
   },
   access: {
@@ -76,12 +76,7 @@ export const testimonials: CollectionConfig = {
       relationTo: 'locations',
       label: 'Comuna',
     },
-    {
-      name: 'neighborhood',
-      type: 'relationship',
-      relationTo: 'neighborhoods',
-      label: 'Barrio',
-    },
+
     {
       name: 'service',
       type: 'relationship',

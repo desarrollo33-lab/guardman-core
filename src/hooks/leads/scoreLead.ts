@@ -49,19 +49,9 @@ function calculateBasicScore(lead: any): number {
   return Math.min(100, Math.max(0, score))
 }
 
-// Obtener reglas de scoring configurables
-async function getScoringRules(payload: any) {
-  try {
-    const rules = await payload.find({
-      collection: 'scoring-rules',
-      where: { isActive: { equals: true } },
-      limit: 1,
-    })
-    return rules.docs[0] || null
-  } catch (error) {
-    console.warn('[Scoring] Could not fetch rules:', error)
-    return null
-  }
+// Scoring rules are now inline (collection removed in V3)
+async function getScoringRules(_payload: any): Promise<null> {
+  return null
 }
 
 // Aplicar pesos de las reglas configurables

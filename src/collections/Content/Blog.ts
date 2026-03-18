@@ -9,7 +9,7 @@ export const blog: CollectionConfig = {
   slug: 'blog',
   admin: {
     useAsTitle: 'title',
-    group: 'Contenido',
+    group: 'Marketing',
     description: 'Artículos del blog',
     listSearchableFields: ['title', 'slug', 'category', 'status'],
   },

@@ -1,117 +1,75 @@
 /**
- * GUARDMAN - Colecciones del CMS
- * Exporta todas las colecciones organizadas por grupo
- * 
- * Fase 1: Sistema + Geografía + Negocio
+ * GUARDMAN V3 - Colecciones del CMS
+ * 15 colecciones organizadas en 4 grupos: Empresa, Marketing, CRM, Sistema
  */
 
 // =============================================================================
-// SISTEMA
-// =============================================================================
-export { users } from './System/Users'
-export { settings } from './System/Settings'
-export { Prompts } from './System/Prompts'
-export { EnrichmentHistory } from './System/EnrichmentHistory'
-
-// Media está en la misma carpeta por compatibilidad con el build
-import { Media } from './Media'
-export { Media }
-
-// =============================================================================
-// GEOGRAFÍA
-// =============================================================================
-export { locations } from './Geography/Locations'
-export { neighborhoods } from './Geography/Neighborhoods'
-
-// =============================================================================
-// NEGOCIO
-// =============================================================================
-export { services } from './Business/Services'
-export { problems } from './Business/Problems'
-export { industries } from './Business/Industries'
-export { solutions } from './Business/Solutions'
-export { personas } from './Business/Personas'
-
-// =============================================================================
-// SEO (Fase 4)
-// =============================================================================
-export { seoPages } from './SEO/SeoPages'
-export { keywords } from './SEO/Keywords'
-export { testimonials } from './SEO/Testimonials'
-
-// =============================================================================
-// CRM (Fase 2)
-// =============================================================================
-export { leads } from './CRM/Leads'
-export { leadDuplicates } from './CRM/LeadDuplicates'
-export { scoringRules } from './CRM/ScoringRules'
-
-// =============================================================================
-// CONTENIDO (Fase 5)
-// =============================================================================
-export { blog } from './Content/Blog'
-export { forms } from './Content/Forms'
-export { formSubmissions } from './Content/FormSubmissions'
-
-// =============================================================================
-// EXPORT PRINCIPAL - COLECCIONES PARA PAYLOAD
+// IMPORTS
 // =============================================================================
 import { users } from './System/Users'
-import { settings } from './System/Settings'
 import { Prompts } from './System/Prompts'
 import { EnrichmentHistory } from './System/EnrichmentHistory'
 import { ApiCache } from './System/ApiCache'
+import { Media } from './Media'
 import { locations } from './Geography/Locations'
-import { neighborhoods } from './Geography/Neighborhoods'
 import { services } from './Business/Services'
 import { problems } from './Business/Problems'
 import { industries } from './Business/Industries'
 import { solutions } from './Business/Solutions'
 import { personas } from './Business/Personas'
 import { leads } from './CRM/Leads'
-import { leadDuplicates } from './CRM/LeadDuplicates'
-import { scoringRules } from './CRM/ScoringRules'
 import { seoPages } from './SEO/SeoPages'
 import { keywords } from './SEO/Keywords'
 import { testimonials } from './SEO/Testimonials'
 import { blog } from './Content/Blog'
-import { forms } from './Content/Forms'
-import { formSubmissions } from './Content/FormSubmissions'
 
+// =============================================================================
+// NAMED EXPORTS
+// =============================================================================
+export { users } from './System/Users'
+export { Prompts } from './System/Prompts'
+export { EnrichmentHistory } from './System/EnrichmentHistory'
+export { ApiCache } from './System/ApiCache'
+export { Media } from './Media'
+export { locations } from './Geography/Locations'
+export { services } from './Business/Services'
+export { problems } from './Business/Problems'
+export { industries } from './Business/Industries'
+export { solutions } from './Business/Solutions'
+export { personas } from './Business/Personas'
+export { leads } from './CRM/Leads'
+export { seoPages } from './SEO/SeoPages'
+export { keywords } from './SEO/Keywords'
+export { testimonials } from './SEO/Testimonials'
+export { blog } from './Content/Blog'
+
+// =============================================================================
+// EXPORT PRINCIPAL - COLECCIONES PARA PAYLOAD
+// =============================================================================
 export const collections = [
-  // Sistema (6)
-  users,    // con auth
-  Media,    // uploads
-  settings, // configuración global
+  // ⚙️ Sistema (5)
+  users,
+  Media,
   Prompts,
   EnrichmentHistory,
   ApiCache,
 
-  // Geografía (2)
-  locations,
-  neighborhoods,
-
-  // Negocio (5)
+  // 🏢 Empresa (5)
   services,
-  problems,
   industries,
-  solutions,
   personas,
+  problems,
+  solutions,
 
-  // CRM (3) - Fase 2
-  leads,
-  leadDuplicates,
-  scoringRules,
-
-  // SEO (3) - Fase 4
+  // 📊 Marketing (5)
+  locations,
   seoPages,
   keywords,
   testimonials,
-
-  // Contenido (3) - Fase 5
   blog,
-  forms,
-  formSubmissions,
+
+  // 💼 CRM (1)
+  leads,
 ]
 
-// Total: 19 colecciones
+// Total: 16 colecciones (15 + Media)

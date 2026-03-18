@@ -14,7 +14,7 @@ export const services: CollectionConfig = {
   slug: 'services',
   admin: {
     useAsTitle: 'title',
-    group: 'Negocio',
+    group: 'Empresa',
     description: 'Servicios de seguridad ofrecidos',
   },
   access: {

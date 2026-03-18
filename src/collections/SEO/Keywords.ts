@@ -16,7 +16,7 @@ export const keywords: CollectionConfig = {
   slug: 'keywords',
   admin: {
     useAsTitle: 'keyword',
-    group: 'SEO',
+    group: 'Marketing',
     description: 'Keywords para SEO',
     listSearchableFields: ['keyword', 'type', 'cluster'],
   },

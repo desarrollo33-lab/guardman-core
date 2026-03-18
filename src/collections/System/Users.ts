@@ -49,6 +49,7 @@ export const users: CollectionConfig = {
     {
       name: 'role',
       type: 'select',
+      saveToJWT: true,
       options: [
         { label: 'Administrador', value: 'admin' },
         { label: 'Vendedor', value: 'sales' },

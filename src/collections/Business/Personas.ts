@@ -14,7 +14,7 @@ export const personas: CollectionConfig = {
   slug: 'personas',
   admin: {
     useAsTitle: 'name',
-    group: 'Negocio',
+    group: 'Empresa',
     description: 'Personas objetivo (clientes ideales)',
   },
   access: {

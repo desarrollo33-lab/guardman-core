@@ -423,30 +423,30 @@ export interface ApiCache {
  */
 export interface Location {
   id: number;
+  /**
+   * Ingresa el nombre y guarda para generar contenido automáticamente
+   */
   name: string;
   /**
-   * Ej: las-condes, providencia, santiago-centro
+   * Se genera automáticamente desde el nombre
    */
-  slug: string;
+  slug?: string | null;
   region?: 'rm' | null;
-  geoZone: 'oriente' | 'nororiente' | 'norte' | 'poniente' | 'suroriente' | 'sur' | 'centro';
+  geoZone?: ('oriente' | 'nororiente' | 'norte' | 'poniente' | 'suroriente' | 'sur' | 'centro') | null;
   tier?: ('premium' | 'high' | 'medium' | 'emerging') | null;
   /**
-   * Define el foco transaccional B2B (Ej. Huechuraba = Industrial).
+   * Se genera automáticamente con IA
    */
   economicDriver?:
     | ('industrial' | 'corporativo_premium' | 'comercial_alta_densidad' | 'residencial_premium' | 'mixto_masivo')
     | null;
-  /**
-   * Ej: Para Seguridad Industrial en San Bernardo, el Dueño/Buyer vive y busca desde Vitacura.
-   */
   decisionBuyerLocation?: (number | null) | Location;
   /**
-   * Al marcar y guardar, se dispara el pipeline asíncrono de Serper y GLM.
+   * Estado del pipeline de generación de contenido
    */
-  autoEnrich?: boolean | null;
+  enrichmentStatus?: ('pending' | 'in_progress' | 'completed' | 'failed') | null;
   /**
-   * Descripción de la comuna para contenido SEO
+   * Se genera automáticamente con IA
    */
   characteristics?: string | null;
   population?: number | null;
@@ -455,7 +455,7 @@ export interface Location {
     lng?: number | null;
   };
   /**
-   * Keywords principales para SEO de esta comuna
+   * Se genera automáticamente con IA
    */
   mainKeywords?:
     | {
@@ -476,11 +476,11 @@ export interface Location {
   isActive?: boolean | null;
   seo?: {
     /**
-     * Título para SEO (si está vacío usa el nombre)
+     * Se genera automáticamente con IA
      */
     metaTitle?: string | null;
     /**
-     * Descripción para SEO
+     * Se genera automáticamente con IA
      */
     metaDescription?: string | null;
   };
@@ -1792,7 +1792,7 @@ export interface LocationsSelect<T extends boolean = true> {
   tier?: T;
   economicDriver?: T;
   decisionBuyerLocation?: T;
-  autoEnrich?: T;
+  enrichmentStatus?: T;
   characteristics?: T;
   population?: T;
   coordinates?:
