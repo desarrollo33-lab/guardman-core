@@ -9,8 +9,6 @@
 
 import type { CollectionConfig } from 'payload'
 
-import { enrichNeighborhoodAfterChange } from '../../hooks/neighborhoods/enrichNeighborhood'
-
 export const neighborhoods: CollectionConfig = {
   slug: 'neighborhoods',
   admin: {
@@ -90,9 +88,19 @@ export const neighborhoods: CollectionConfig = {
       defaultValue: true,
       label: 'Barrio activo',
     },
+    {
+      name: 'enrichButton',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: {
+            path: '/components/EnrichButton',
+            exportName: 'EnrichButton',
+          },
+        },
+      },
+    },
   ],
 
-  hooks: {
-    afterChange: [enrichNeighborhoodAfterChange],
-  },
+  hooks: {},
 }

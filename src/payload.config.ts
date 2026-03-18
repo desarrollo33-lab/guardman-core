@@ -10,6 +10,8 @@ import { r2Storage } from '@payloadcms/storage-r2'
 
 import { collections } from './collections'
 import { users as Users } from './collections/System/Users'
+import { BrandDNA } from './globals/BrandDNA'
+import { asyncEnrichmentEndpoint } from './endpoints/asyncEnrichment'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -59,6 +61,9 @@ if (telegramBotToken) {
 }
 
 export default buildConfig({
+  endpoints: [
+    asyncEnrichmentEndpoint,
+  ],
   admin: {
     user: Users.slug,
     avatar: {
@@ -69,6 +74,9 @@ export default buildConfig({
     },
   },
   collections,
+  globals: [
+    BrandDNA,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -62,14 +62,13 @@ export const industries: CollectionConfig = {
     },
     {
       name: 'targetPersonas',
-      type: 'array',
+      type: 'relationship',
+      relationTo: 'personas',
+      hasMany: true,
       label: 'Personas objetivo',
       admin: {
-        description: 'Roles típicos en esta industria',
+        description: 'Roles típicos en esta industria (relacionados a la colección Personas)',
       },
-      fields: [
-        { name: 'persona', type: 'text', label: 'Persona' },
-      ],
     },
     {
       name: 'features',

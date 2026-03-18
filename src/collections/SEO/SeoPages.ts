@@ -67,10 +67,32 @@ export const seoPages: CollectionConfig = {
         { label: '📄 Problema + Comuna', value: 'problem-location' },
       ],
     },
+    {
+      name: 'clusterRole',
+      type: 'select',
+      label: 'Rol en el Clúster',
+      options: [
+        { label: 'Hub (Pillar Page)', value: 'hub' },
+        { label: 'Spoke (Cluster)', value: 'spoke' },
+        { label: 'Local Bottom-Funnel', value: 'local_bottom_funnel' },
+      ],
+      admin: {
+        description: 'Clasificación estructural dentro del Topic Cluster.',
+      }
+    },
 
     // ===================================================================
     // RELACIONES
     // ===================================================================
+    {
+      name: 'parentHub',
+      type: 'relationship',
+      relationTo: 'seo-pages',
+      label: 'Página Hub (Pillar Page)',
+      admin: {
+        description: 'Define la página padre a la que apunta y pertenece.',
+      }
+    },
     {
       name: 'location',
       type: 'relationship',
@@ -113,6 +135,15 @@ export const seoPages: CollectionConfig = {
       admin: {
         condition: (data) => ['persona', 'persona-location'].includes(data.pageType),
       },
+    },
+    {
+      name: 'targetPersona',
+      type: 'relationship',
+      relationTo: 'personas',
+      label: 'Persona Objetivo (Target Intent)',
+      admin: {
+        description: 'El tomador de decisiones o Buyer Persona al que apunta el contenido B2B.',
+      }
     },
     {
       name: 'problem',
@@ -346,6 +377,21 @@ export const seoPages: CollectionConfig = {
     // ===================================================================
     // ESTADO Y PRIORIDAD
     // ===================================================================
+    {
+      name: 'glmGenerationStatus',
+      type: 'select',
+      label: 'Estado de Generación IA',
+      options: [
+        { label: 'Borrador', value: 'draft' },
+        { label: 'Generando...', value: 'generating' },
+        { label: 'Requiere Revisión', value: 'review_needed' },
+        { label: 'Publicado', value: 'published' },
+      ],
+      defaultValue: 'draft',
+      admin: {
+        position: 'sidebar'
+      }
+    },
     {
       name: 'priorityScore',
       type: 'number',

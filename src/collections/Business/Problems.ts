@@ -24,9 +24,9 @@ export const problems: CollectionConfig = {
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
-  hooks: {
-    afterChange: [enrichProblemAfterChange],
-  },
+  // hooks: {
+  //   afterChange: [enrichProblemAfterChange],
+  // },
   fields: [
     {
       name: 'name',
@@ -102,30 +102,6 @@ export const problems: CollectionConfig = {
         description: 'Por qué el cliente busca este servicio',
       },
       fields: [{ name: 'painPoint', type: 'text', label: 'Punto de dolor' }],
-    },
-    {
-      name: 'serperData',
-      type: 'group',
-      label: 'Datos de Serper',
-      admin: {
-        hidden: true,
-        description: 'Datos obtenidos de la API de Serper',
-      },
-      fields: [
-        { name: 'newsCount', type: 'number', label: 'Noticias encontradas' },
-        { name: 'searchVolume', type: 'number', label: 'Volumen de búsqueda' },
-        {
-          name: 'trending',
-          type: 'select',
-          label: 'Tendencia',
-          options: [
-            { label: 'En Auge', value: 'rising' },
-            { label: 'Estable', value: 'stable' },
-            { label: 'Declinando', value: 'declining' },
-          ],
-        },
-        { name: 'lastChecked', type: 'date', label: 'Última verificación' },
-      ],
     },
     {
       name: 'isActive',

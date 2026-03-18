@@ -10,6 +10,8 @@
 // =============================================================================
 export { users } from './System/Users'
 export { settings } from './System/Settings'
+export { Prompts } from './System/Prompts'
+export { EnrichmentHistory } from './System/EnrichmentHistory'
 
 // Media está en la misma carpeta por compatibilidad con el build
 import { Media } from './Media'
@@ -56,6 +58,9 @@ export { formSubmissions } from './Content/FormSubmissions'
 // =============================================================================
 import { users } from './System/Users'
 import { settings } from './System/Settings'
+import { Prompts } from './System/Prompts'
+import { EnrichmentHistory } from './System/EnrichmentHistory'
+import { ApiCache } from './System/ApiCache'
 import { locations } from './Geography/Locations'
 import { neighborhoods } from './Geography/Neighborhoods'
 import { services } from './Business/Services'
@@ -74,10 +79,13 @@ import { forms } from './Content/Forms'
 import { formSubmissions } from './Content/FormSubmissions'
 
 export const collections = [
-  // Sistema (3)
+  // Sistema (6)
   users,    // con auth
   Media,    // uploads
   settings, // configuración global
+  Prompts,
+  EnrichmentHistory,
+  ApiCache,
 
   // Geografía (2)
   locations,

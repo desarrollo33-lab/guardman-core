@@ -87,14 +87,13 @@ export const personas: CollectionConfig = {
     },
     {
       name: 'painPoints',
-      type: 'array',
-      label: 'Puntos de Dolor',
+      type: 'relationship',
+      relationTo: 'problems',
+      hasMany: true,
+      label: 'Puntos de Dolor (Problemas)',
       admin: {
-        description: 'Problemas que busca resolver',
+        description: 'Problemas estructurales que sufre este cliente (ligados a colección Problems)',
       },
-      fields: [
-        { name: 'pain', type: 'text', label: 'Punto de dolor' },
-      ],
     },
     {
       name: 'needs',

@@ -9,8 +9,7 @@
  */
 
 import type { CollectionConfig } from 'payload'
-
-import { enrichLocationAfterChange } from '../../hooks/locations/enrichLocation'
+import { triggerAsyncEnrichment } from '../../hooks/locations/triggerAsyncEnrichment'
 
 export const locations: CollectionConfig = {
   slug: 'locations',
@@ -76,6 +75,39 @@ export const locations: CollectionConfig = {
         { label: 'Emergente (C3-D)', value: 'emerging' },
       ],
       defaultValue: 'medium',
+    },
+    {
+      name: 'economicDriver',
+      type: 'select',
+      label: 'Motor Económico (Value-Based Tiering)',
+      options: [
+        { label: 'Industrial (Alto Valor B2B)', value: 'industrial' },
+        { label: 'Corporativo Premium', value: 'corporativo_premium' },
+        { label: 'Comercial de Alta Densidad', value: 'comercial_alta_densidad' },
+        { label: 'Residencial Premium', value: 'residencial_premium' },
+        { label: 'Mixto Masivo', value: 'mixto_masivo' },
+      ],
+      admin: {
+        description: 'Define el foco transaccional B2B (Ej. Huechuraba = Industrial).',
+      }
+    },
+    {
+      name: 'decisionBuyerLocation',
+      type: 'relationship',
+      relationTo: 'locations',
+      label: 'Ubicación del Buyer Persona (Cross-Location Intent)',
+      admin: {
+        description: 'Ej: Para Seguridad Industrial en San Bernardo, el Dueño/Buyer vive y busca desde Vitacura.',
+      }
+    },
+    {
+      name: 'autoEnrich',
+      type: 'checkbox',
+      label: 'Auto-Enrich con IA',
+      defaultValue: false,
+      admin: {
+        description: 'Al marcar y guardar, se dispara el pipeline asíncrono de Serper y GLM.',
+      }
     },
     {
       name: 'characteristics',
@@ -162,9 +194,21 @@ export const locations: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'enrichButton',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: {
+            path: '/components/EnrichButton',
+            exportName: 'EnrichButton',
+          },
+        },
+      },
+    },
   ],
 
   hooks: {
-    afterChange: [enrichLocationAfterChange],
+    afterChange: [triggerAsyncEnrichment],
   },
 }

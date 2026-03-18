@@ -70,6 +70,9 @@ export interface Config {
     users: User;
     media: Media;
     settings: Setting;
+    prompts: Prompt;
+    'enrichment-history': EnrichmentHistory;
+    'api-cache': ApiCache;
     locations: Location;
     neighborhoods: Neighborhood;
     services: Service;
@@ -96,6 +99,9 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     settings: SettingsSelect<false> | SettingsSelect<true>;
+    prompts: PromptsSelect<false> | PromptsSelect<true>;
+    'enrichment-history': EnrichmentHistorySelect<false> | EnrichmentHistorySelect<true>;
+    'api-cache': ApiCacheSelect<false> | ApiCacheSelect<true>;
     locations: LocationsSelect<false> | LocationsSelect<true>;
     neighborhoods: NeighborhoodsSelect<false> | NeighborhoodsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
@@ -121,8 +127,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'brand-dna': BrandDna;
+  };
+  globalsSelect: {
+    'brand-dna': BrandDnaSelect<false> | BrandDnaSelect<true>;
+  };
   locale: null;
   user: User;
   jobs: {
@@ -306,6 +316,106 @@ export interface Setting {
   createdAt: string;
 }
 /**
+ * Gestión de Prompts modulares para GLM.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "prompts".
+ */
+export interface Prompt {
+  id: number;
+  /**
+   * Identificador único (ej. "generate_cluster_structure", "write_hero_section").
+   */
+  identifier: string;
+  /**
+   * Propósito de este prompt.
+   */
+  description?: string | null;
+  /**
+   * Instrucciones base para la IA (rol, formato, restricciones).
+   */
+  systemPrompt: string;
+  /**
+   * Template del prompt con variables inyectables (ej. {{location}}, {{service}}).
+   */
+  userPromptTemplate: string;
+  /**
+   * JSON Schema estricto que se espera recibir de respuesta.
+   */
+  expectedOutputSchema?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Registro de auditoría de todas las interacciones con APIs (Serper, GLM).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrichment-history".
+ */
+export interface EnrichmentHistory {
+  id: number;
+  sourceCollection?: ('locations' | 'services' | 'problems' | 'seo-pages') | null;
+  sourceId?: string | null;
+  serperRawData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  glmPromptIdentifier?: (number | null) | Prompt;
+  glmResponse?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  tokensUsed?: number | null;
+  wasSuccessful?: boolean | null;
+  errorMessage?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Memoria Global: Interceptor de Peticiones a APIs Externas para ahorrar costos.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "api-cache".
+ */
+export interface ApiCache {
+  id: number;
+  /**
+   * La clave de caché, por ejemplo el Hash del prompt GLM o el query de Serper.
+   */
+  cacheKey: string;
+  service: 'serper' | 'glm';
+  response:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Comunas de la Región Metropolitana
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -321,6 +431,20 @@ export interface Location {
   region?: 'rm' | null;
   geoZone: 'oriente' | 'nororiente' | 'norte' | 'poniente' | 'suroriente' | 'sur' | 'centro';
   tier?: ('premium' | 'high' | 'medium' | 'emerging') | null;
+  /**
+   * Define el foco transaccional B2B (Ej. Huechuraba = Industrial).
+   */
+  economicDriver?:
+    | ('industrial' | 'corporativo_premium' | 'comercial_alta_densidad' | 'residencial_premium' | 'mixto_masivo')
+    | null;
+  /**
+   * Ej: Para Seguridad Industrial en San Bernardo, el Dueño/Buyer vive y busca desde Vitacura.
+   */
+  decisionBuyerLocation?: (number | null) | Location;
+  /**
+   * Al marcar y guardar, se dispara el pipeline asíncrono de Serper y GLM.
+   */
+  autoEnrich?: boolean | null;
   /**
    * Descripción de la comuna para contenido SEO
    */
@@ -502,14 +626,9 @@ export interface Industry {
   image?: (number | null) | Media;
   relatedServices?: (number | Service)[] | null;
   /**
-   * Roles típicos en esta industria
+   * Roles típicos en esta industria (relacionados a la colección Personas)
    */
-  targetPersonas?:
-    | {
-        persona?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  targetPersonas?: (number | Persona)[] | null;
   features?:
     | {
         feature?: string | null;
@@ -541,6 +660,116 @@ export interface Industry {
     metaTitle?: string | null;
     metaDescription?: string | null;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Personas objetivo (clientes ideales)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "personas".
+ */
+export interface Persona {
+  id: number;
+  name: string;
+  slug: string;
+  /**
+   * Ej: Administrador de Condominio
+   */
+  title: string;
+  description?: string | null;
+  avatar?: (number | null) | Media;
+  demographics?: {
+    ageRange?: string | null;
+    location?: string | null;
+    incomeLevel?: ('premium' | 'high' | 'medium' | 'emerging') | null;
+  };
+  /**
+   * Problemas estructurales que sufre este cliente (ligados a colección Problems)
+   */
+  painPoints?: (number | Problem)[] | null;
+  needs?:
+    | {
+        need?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  goals?:
+    | {
+        goal?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  preferredServices?: (number | Service)[] | null;
+  budgetRange?: {
+    min?: number | null;
+    max?: number | null;
+  };
+  decisionTimeline?: ('immediate' | 'short' | 'medium' | 'long') | null;
+  /**
+   * Keywords que usa esta persona
+   */
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedIndustries?: (number | Industry)[] | null;
+  communication?: {
+    preferredChannel?: ('phone' | 'email' | 'whatsapp' | 'in_person') | null;
+    tone?: ('formal' | 'semi_formal' | 'informal') | null;
+  };
+  /**
+   * Puntos base para scoring de leads
+   */
+  scoring?: {
+    baseScore?: number | null;
+    urgencyWeight?: number | null;
+  };
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Problemas de seguridad que buscan los clientes (keywords SEO)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "problems".
+ */
+export interface Problem {
+  id: number;
+  /**
+   * Ej: Robos en condominios, Falta de seguridad
+   */
+  name: string;
+  slug: string;
+  /**
+   * Descripción del problema para contenido SEO
+   */
+  description?: string | null;
+  relatedServices?: (number | Service)[] | null;
+  /**
+   * Palabras clave relacionadas con este problema
+   */
+  keywords?:
+    | {
+        keyword?: string | null;
+        intent?: ('informational' | 'commercial' | 'transactional') | null;
+        volume?: ('high' | 'medium' | 'low') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Por qué el cliente busca este servicio
+   */
+  painPoints?:
+    | {
+        painPoint?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -608,57 +837,6 @@ export interface Blog {
    * Tiempo estimado de lectura
    */
   readingTime?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Problemas de seguridad que buscan los clientes (keywords SEO)
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "problems".
- */
-export interface Problem {
-  id: number;
-  /**
-   * Ej: Robos en condominios, Falta de seguridad
-   */
-  name: string;
-  slug: string;
-  /**
-   * Descripción del problema para contenido SEO
-   */
-  description?: string | null;
-  relatedServices?: (number | Service)[] | null;
-  /**
-   * Palabras clave relacionadas con este problema
-   */
-  keywords?:
-    | {
-        keyword?: string | null;
-        intent?: ('informational' | 'commercial' | 'transactional') | null;
-        volume?: ('high' | 'medium' | 'low') | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Por qué el cliente busca este servicio
-   */
-  painPoints?:
-    | {
-        painPoint?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Datos obtenidos de la API de Serper
-   */
-  serperData?: {
-    newsCount?: number | null;
-    searchVolume?: number | null;
-    trending?: ('rising' | 'stable' | 'declining') | null;
-    lastChecked?: string | null;
-  };
-  isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -732,79 +910,6 @@ export interface Solution {
   isHighlighted?: boolean | null;
   isActive?: boolean | null;
   order?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Personas objetivo (clientes ideales)
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "personas".
- */
-export interface Persona {
-  id: number;
-  name: string;
-  slug: string;
-  /**
-   * Ej: Administrador de Condominio
-   */
-  title: string;
-  description?: string | null;
-  avatar?: (number | null) | Media;
-  demographics?: {
-    ageRange?: string | null;
-    location?: string | null;
-    incomeLevel?: ('premium' | 'high' | 'medium' | 'emerging') | null;
-  };
-  /**
-   * Problemas que busca resolver
-   */
-  painPoints?:
-    | {
-        pain?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  needs?:
-    | {
-        need?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  goals?:
-    | {
-        goal?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  preferredServices?: (number | Service)[] | null;
-  budgetRange?: {
-    min?: number | null;
-    max?: number | null;
-  };
-  decisionTimeline?: ('immediate' | 'short' | 'medium' | 'long') | null;
-  /**
-   * Keywords que usa esta persona
-   */
-  keywords?:
-    | {
-        keyword?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  relatedIndustries?: (number | Industry)[] | null;
-  communication?: {
-    preferredChannel?: ('phone' | 'email' | 'whatsapp' | 'in_person') | null;
-    tone?: ('formal' | 'semi_formal' | 'informal') | null;
-  };
-  /**
-   * Puntos base para scoring de leads
-   */
-  scoring?: {
-    baseScore?: number | null;
-    urgencyWeight?: number | null;
-  };
-  isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1026,10 +1131,22 @@ export interface SeoPage {
     | 'industry-location'
     | 'persona-location'
     | 'problem-location';
+  /**
+   * Clasificación estructural dentro del Topic Cluster.
+   */
+  clusterRole?: ('hub' | 'spoke' | 'local_bottom_funnel') | null;
+  /**
+   * Define la página padre a la que apunta y pertenece.
+   */
+  parentHub?: (number | null) | SeoPage;
   location?: (number | null) | Location;
   service?: (number | null) | Service;
   industry?: (number | null) | Industry;
   persona?: (number | null) | Persona;
+  /**
+   * El tomador de decisiones o Buyer Persona al que apunta el contenido B2B.
+   */
+  targetPersona?: (number | null) | Persona;
   problem?: (number | null) | Problem;
   seo?: {
     /**
@@ -1104,6 +1221,7 @@ export interface SeoPage {
         }[]
       | null;
   };
+  glmGenerationStatus?: ('draft' | 'generating' | 'review_needed' | 'published') | null;
   /**
    * Mayor número = más importante para generar
    */
@@ -1328,6 +1446,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'settings';
         value: number | Setting;
+      } | null)
+    | ({
+        relationTo: 'prompts';
+        value: number | Prompt;
+      } | null)
+    | ({
+        relationTo: 'enrichment-history';
+        value: number | EnrichmentHistory;
+      } | null)
+    | ({
+        relationTo: 'api-cache';
+        value: number | ApiCache;
       } | null)
     | ({
         relationTo: 'locations';
@@ -1611,6 +1741,47 @@ export interface SettingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "prompts_select".
+ */
+export interface PromptsSelect<T extends boolean = true> {
+  identifier?: T;
+  description?: T;
+  systemPrompt?: T;
+  userPromptTemplate?: T;
+  expectedOutputSchema?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrichment-history_select".
+ */
+export interface EnrichmentHistorySelect<T extends boolean = true> {
+  sourceCollection?: T;
+  sourceId?: T;
+  serperRawData?: T;
+  glmPromptIdentifier?: T;
+  glmResponse?: T;
+  tokensUsed?: T;
+  wasSuccessful?: T;
+  errorMessage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "api-cache_select".
+ */
+export interface ApiCacheSelect<T extends boolean = true> {
+  cacheKey?: T;
+  service?: T;
+  response?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "locations_select".
  */
 export interface LocationsSelect<T extends boolean = true> {
@@ -1619,6 +1790,9 @@ export interface LocationsSelect<T extends boolean = true> {
   region?: T;
   geoZone?: T;
   tier?: T;
+  economicDriver?: T;
+  decisionBuyerLocation?: T;
+  autoEnrich?: T;
   characteristics?: T;
   population?: T;
   coordinates?:
@@ -1759,14 +1933,6 @@ export interface ProblemsSelect<T extends boolean = true> {
         painPoint?: T;
         id?: T;
       };
-  serperData?:
-    | T
-    | {
-        newsCount?: T;
-        searchVolume?: T;
-        trending?: T;
-        lastChecked?: T;
-      };
   isActive?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1782,12 +1948,7 @@ export interface IndustriesSelect<T extends boolean = true> {
   icon?: T;
   image?: T;
   relatedServices?: T;
-  targetPersonas?:
-    | T
-    | {
-        persona?: T;
-        id?: T;
-      };
+  targetPersonas?: T;
   features?:
     | T
     | {
@@ -1898,12 +2059,7 @@ export interface PersonasSelect<T extends boolean = true> {
         location?: T;
         incomeLevel?: T;
       };
-  painPoints?:
-    | T
-    | {
-        pain?: T;
-        id?: T;
-      };
+  painPoints?: T;
   needs?:
     | T
     | {
@@ -2096,10 +2252,13 @@ export interface SeoPagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   pageType?: T;
+  clusterRole?: T;
+  parentHub?: T;
   location?: T;
   service?: T;
   industry?: T;
   persona?: T;
+  targetPersona?: T;
   problem?: T;
   seo?:
     | T
@@ -2162,6 +2321,7 @@ export interface SeoPagesSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  glmGenerationStatus?: T;
   priorityScore?: T;
   status?: T;
   publishedAt?: T;
@@ -2369,6 +2529,117 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * ADN de la marca, Asset Visuales (Logo/Favicon), Reglas para IA y Configuración de Negocio Local.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brand-dna".
+ */
+export interface BrandDna {
+  id: number;
+  companyName: string;
+  legalName?: string | null;
+  rut?: string | null;
+  /**
+   * Tono de voz que la IA debe usar (Ej: "B2B, profesional").
+   */
+  toneOfVoice: string;
+  /**
+   * Propuestas de valor clave (ej. "GuardPod autónomo").
+   */
+  coreDifferentiators: {
+    differentiator: string;
+    id?: string | null;
+  }[];
+  /**
+   * Reglas invariables para GLM (ej. "Siempre nombrar OS-10").
+   */
+  strictRules: {
+    rule: string;
+    id?: string | null;
+  }[];
+  logo?: (number | null) | Media;
+  coverImage?: (number | null) | Media;
+  favicon?: (number | null) | Media;
+  colorPalette?: {
+    primary?: string | null;
+    secondary?: string | null;
+    accent?: string | null;
+  };
+  headquartersAddress?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  primaryPhone?: string | null;
+  whatsappNumber?: string | null;
+  supportEmail?: string | null;
+  businessHours?:
+    | {
+        day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+        /**
+         * ej: 09:00
+         */
+        openTime?: string | null;
+        /**
+         * ej: 18:00
+         */
+        closeTime?: string | null;
+        closed?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brand-dna_select".
+ */
+export interface BrandDnaSelect<T extends boolean = true> {
+  companyName?: T;
+  legalName?: T;
+  rut?: T;
+  toneOfVoice?: T;
+  coreDifferentiators?:
+    | T
+    | {
+        differentiator?: T;
+        id?: T;
+      };
+  strictRules?:
+    | T
+    | {
+        rule?: T;
+        id?: T;
+      };
+  logo?: T;
+  coverImage?: T;
+  favicon?: T;
+  colorPalette?:
+    | T
+    | {
+        primary?: T;
+        secondary?: T;
+        accent?: T;
+      };
+  headquartersAddress?: T;
+  latitude?: T;
+  longitude?: T;
+  primaryPhone?: T;
+  whatsappNumber?: T;
+  supportEmail?: T;
+  businessHours?:
+    | T
+    | {
+        day?: T;
+        openTime?: T;
+        closeTime?: T;
+        closed?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
