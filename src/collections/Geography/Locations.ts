@@ -11,8 +11,8 @@ export const locations: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req: { user } }) => !!user,
-    update: ({ req: { user } }) => !!user,
+    create: () => true,
+    update: () => true,
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
   fields: [
